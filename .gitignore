@@ -1,0 +1,8 @@
+# Ignore configurations/output files
+*.json
+*.yaml
+*.toml
+
+# Ignore
+vendor
+
