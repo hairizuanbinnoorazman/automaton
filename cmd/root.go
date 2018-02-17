@@ -1,14 +1,18 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 
+	"github.com/hairizuanbinnoorazman/automaton/snapshot"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	cfgFile string
+	cfgFile  string
+	credFile string
 
 	rootCmd = &cobra.Command{
 		Use:   "automaton",
@@ -26,12 +30,24 @@ var (
 		},
 	}
 
-	testCmd = &cobra.Command{
-		Use:   "test",
-		Short: "Check on the config values being used",
+	snapshotCmd = &cobra.Command{
+		Use:   "snapshot",
+		Short: "Use this command to create a snapshot of your GA account",
 		Long:  `Not available yet`,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(viper.GetString("testVariable"))
+			client := googleAnalyticsAuth(credFile)
+
+			config, _ := ioutil.ReadFile(cfgFile)
+			type gaConfig struct {
+				GaAccountID  string
+				GaPropertyID string
+				GaViewID     string
+			}
+			var liveGAConfig gaConfig
+			json.Unmarshal(config, &liveGAConfig)
+
+			snapshotData := snapshot.GetSnapshot(client, liveGAConfig.GaAccountID, liveGAConfig.GaPropertyID, liveGAConfig.GaViewID)
+			fmt.Println(string(snapshotData))
 		},
 	}
 )
@@ -40,8 +56,9 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.AddCommand(versionCmd)
-	rootCmd.AddCommand(testCmd)
+	rootCmd.AddCommand(snapshotCmd)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "config.json", "Default config file is config.yaml")
+	rootCmd.PersistentFlags().StringVar(&credFile, "cred", "cred.json", "Default config file is cred.yaml")
 }
 
 // Execute cli commands
