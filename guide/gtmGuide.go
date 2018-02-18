@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path"
 	"text/template"
 	"time"
 
@@ -116,7 +117,8 @@ func GenerateGuide(configFile string) {
 }
 
 func generateInitialSetupDoc(w io.Writer, config GuideConfig) {
-	t := template.Must(template.New("initialSetup.md").ParseFiles(config.InitialSetup.Template))
+	_, filename := path.Split(config.InitialSetup.Template)
+	t := template.Must(template.New(filename).ParseFiles(config.InitialSetup.Template))
 	err := t.Execute(w, config)
 	if err != nil {
 		fmt.Println("Issue in trying to generate the initial setup section of the GTM Guide")
