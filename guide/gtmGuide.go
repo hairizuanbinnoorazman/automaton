@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"strconv"
 	"text/template"
 	"time"
 
@@ -18,6 +19,7 @@ import (
 func main() {
 	//fmt.Println(string(NewGuideConfig()))
 	GenerateGuide("zzz.json")
+
 }
 
 func csvTests() {
@@ -65,6 +67,7 @@ type events struct {
 	Include       bool   `json:"include"`
 	TitleTemplate string `json:"titleTemplate"`
 	Template      string `json:"template"`
+	EventList     string `json:"eventList"`
 }
 
 // NewGuideConfig Need to define and initialize the initial guide json values
@@ -78,8 +81,9 @@ func NewGuideConfig() []byte {
 		},
 		Events: events{
 			Include:       true,
-			TitleTemplate: "templates/gtm/eventsTitleTemplate.md",
-			Template:      "templates/gtm/eventsTemplate.md",
+			TitleTemplate: "templates/gtm/eventsHeader.md",
+			Template:      "templates/gtm/events.md",
+			EventList:     "templates/gtm/events.csv",
 		},
 	}
 	output, err := json.MarshalIndent(newConfig, "", "\t")
@@ -112,6 +116,7 @@ func GenerateGuide(configFile string) {
 	bufferedFile := bufio.NewWriter(file)
 
 	generateInitialSetupDoc(bufferedFile, config)
+	generateEventDoc(bufferedFile, config)
 
 	bufferedFile.Flush()
 }
@@ -123,5 +128,84 @@ func generateInitialSetupDoc(w io.Writer, config GuideConfig) {
 	if err != nil {
 		fmt.Println("Issue in trying to generate the initial setup section of the GTM Guide")
 		fmt.Println(err.Error())
+	}
+	// Add a few new lines
+	io.WriteString(w, "\n\n")
+}
+
+func generateEventDoc(w io.Writer, config GuideConfig) {
+	_, titleTemplateFilename := path.Split(config.Events.TitleTemplate)
+	t := template.Must(template.New(titleTemplateFilename).ParseFiles(config.Events.TitleTemplate))
+	err := t.Execute(w, config)
+	if err != nil {
+		fmt.Println("Issue in trying to generate the event header setup section of the GTM Guide")
+		fmt.Println(err.Error())
+	}
+
+	// Add a few new lines
+	io.WriteString(w, "\n\n")
+
+	// Generate the event table in markdown
+	eventListFile, err := os.Open(config.Events.EventList)
+	if err != nil {
+		fmt.Println("Error in trying to find event list file")
+		fmt.Println(err.Error())
+	}
+	eventList, err := csv.NewReader(eventListFile).ReadAll()
+	if err != nil {
+		fmt.Println("Error when reading event list file")
+		fmt.Println(err.Error())
+	}
+	eventList = eventList[1:len(eventList)]
+	var filteredEventList [][]string
+	for _, row := range eventList {
+		filteredEventList = append(filteredEventList, row[1:len(row)])
+	}
+	eventListTable := tablewriter.NewWriter(w)
+	eventListTable.SetHeader([]string{"Event Name", "Event Description", "Event Category", "Event Action", "Event Label", "Event Value"})
+	eventListTable.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
+	eventListTable.SetCenterSeparator("|")
+	eventListTable.AppendBulk(filteredEventList)
+	eventListTable.Render()
+
+	// Add a few new lines
+	io.WriteString(w, "\n\n")
+
+	// Create event pages
+	type eventDetails struct {
+		Image       string
+		Name        string
+		Description string
+		Category    string
+		Action      string
+		Label       string
+		Value       int
+	}
+	for _, row := range eventList {
+		eventValue, err := strconv.Atoi(row[6])
+		if err != nil {
+			fmt.Println("Error in parsing a string to a number")
+			fmt.Println(err.Error())
+		}
+		eventData := eventDetails{
+			Image:       row[0],
+			Name:        row[1],
+			Description: row[2],
+			Category:    row[3],
+			Action:      row[4],
+			Label:       row[5],
+			Value:       eventValue,
+		}
+
+		_, titleTemplateFilename := path.Split(config.Events.Template)
+		t := template.Must(template.New(titleTemplateFilename).ParseFiles(config.Events.Template))
+		err = t.Execute(w, eventData)
+		if err != nil {
+			fmt.Println("Issue in trying to generate the event section of the GTM Guide")
+			fmt.Println(err.Error())
+		}
+
+		// Add a few new lines
+		io.WriteString(w, "\n\n")
 	}
 }
