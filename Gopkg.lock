@@ -38,10 +38,22 @@
   version = "v1.7.6"
 
 [[projects]]
+  name = "github.com/mattn/go-runewidth"
+  packages = ["."]
+  revision = "9e777a8366cce605130a531d2cd6363d07ad7317"
+  version = "v0.0.2"
+
+[[projects]]
   branch = "master"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
   revision = "a4e142e9c047c904fa2f1e144d9a84e6133024bc"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/olekukonko/tablewriter"
+  packages = ["."]
+  revision = "b8a9be070da40449e501c3c4730a889e42d87a9e"
 
 [[projects]]
   name = "github.com/pelletier/go-toml"
@@ -130,6 +142,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "93706207d18ef50ee2419a4691aebd67423c29f8420e314411c3b7d99f0aa554"
+  inputs-digest = "2c7b87df11355d7d4886e8c94fb0edb123e261b5de2c069242864e9d31aa8b5c"
   solver-name = "gps-cdcl"
   solver-version = 1
