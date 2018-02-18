@@ -1,5 +1,7 @@
 # GTM Implementation Guide
 
+## Initial Setup
+
 Add the following script script before the GTM Code snippet below.
 
 ```html
