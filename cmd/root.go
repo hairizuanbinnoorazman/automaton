@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/hairizuanbinnoorazman/automaton/guide"
-	"github.com/hairizuanbinnoorazman/automaton/snapshot"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gitlab.com/hairizuanbinnoorazman/automaton/guide"
+	"gitlab.com/hairizuanbinnoorazman/automaton/snapshot"
 )
 
 var (

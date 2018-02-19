@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/hairizuanbinnoorazman/automaton/cmd"
+	"gitlab.com/hairizuanbinnoorazman/automaton/cmd"
 )
 
 func main() {
