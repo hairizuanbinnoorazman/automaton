@@ -1,4 +1,4 @@
-package main
+package guide
 
 import (
 	"bufio"
@@ -16,11 +16,10 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-func main() {
-	//fmt.Println(string(NewGuideConfig()))
-	GenerateGuide("zzz.json")
-
-}
+// func main() {
+// 	//fmt.Println(string(NewGuideConfig()))
+// 	GenerateGuide("zzz.json")
+// }
 
 func csvTests() {
 	// data := [][]string{
@@ -52,10 +51,12 @@ func csvTests() {
 
 // GuideConfig Struct to define all required properties in a GTM Document
 type GuideConfig struct {
-	OutputFile     string       `json:"outputFile"`
-	GtmContainerID string       `json:"gtmContainerID"`
-	InitialSetup   initialSetup `json:"initialSetup"`
-	Events         events       `json:"events"`
+	OutputFile       string           `json:"outputFile"`
+	GtmContainerID   string           `json:"gtmContainerID"`
+	InitialSetup     initialSetup     `json:"initialSetup"`
+	Events           events           `json:"events"`
+	CustomDimensions customDimensions `json:"customDimensions"`
+	CustomMetrics    customMetrics    `json:"customMetrics"`
 }
 
 type initialSetup struct {
@@ -68,6 +69,18 @@ type events struct {
 	TitleTemplate string `json:"titleTemplate"`
 	Template      string `json:"template"`
 	EventList     string `json:"eventList"`
+}
+
+type customDimensions struct {
+	Include             bool   `json:"include"`
+	Template            string `json:"template"`
+	CustomDimensionList string `json:"customDimensionList"`
+}
+
+type customMetrics struct {
+	Include          bool   `json:"include"`
+	Template         string `json:"template"`
+	CustomMetricList string `json:"customMetricsList"`
 }
 
 // NewGuideConfig Need to define and initialize the initial guide json values
@@ -84,6 +97,16 @@ func NewGuideConfig() []byte {
 			TitleTemplate: "templates/gtm/eventsHeader.md",
 			Template:      "templates/gtm/events.md",
 			EventList:     "templates/gtm/events.csv",
+		},
+		CustomDimensions: customDimensions{
+			Include:             true,
+			Template:            "templates/gtm/customDimensions.md",
+			CustomDimensionList: "templates/gtm/customDimensions.csv",
+		},
+		CustomMetrics: customMetrics{
+			Include:          true,
+			Template:         "templates/gtm/customMetrics.md",
+			CustomMetricList: "templates/gtm/customMetrics.csv",
 		},
 	}
 	output, err := json.MarshalIndent(newConfig, "", "\t")
@@ -117,6 +140,8 @@ func GenerateGuide(configFile string) {
 
 	generateInitialSetupDoc(bufferedFile, config)
 	generateEventDoc(bufferedFile, config)
+	generateCustomDimensionDoc(bufferedFile, config)
+	generateCustomMetricDoc(bufferedFile, config)
 
 	bufferedFile.Flush()
 }
@@ -208,4 +233,82 @@ func generateEventDoc(w io.Writer, config GuideConfig) {
 		// Add a few new lines
 		io.WriteString(w, "\n\n")
 	}
+}
+
+func generateCustomDimensionDoc(w io.Writer, config GuideConfig) {
+	_, titleTemplateFilename := path.Split(config.CustomDimensions.Template)
+	t := template.Must(template.New(titleTemplateFilename).ParseFiles(config.CustomDimensions.Template))
+	err := t.Execute(w, config)
+	if err != nil {
+		fmt.Println("Issue in trying to generate the custom dimension section of the GTM Guide")
+		fmt.Println(err.Error())
+	}
+
+	// Add a few new lines
+	io.WriteString(w, "\n\n")
+
+	// Generate the event table in markdown
+	listFile, err := os.Open(config.CustomDimensions.CustomDimensionList)
+	if err != nil {
+		fmt.Println("Error in trying to find custom dimension list file")
+		fmt.Println(err.Error())
+	}
+	list, err := csv.NewReader(listFile).ReadAll()
+	if err != nil {
+		fmt.Println("Error when reading event list file")
+		fmt.Println(err.Error())
+	}
+	list = list[1:len(list)]
+	var filteredList [][]string
+	for _, row := range list {
+		filteredList = append(filteredList, row[1:len(row)])
+	}
+	listTable := tablewriter.NewWriter(w)
+	listTable.SetHeader([]string{"Slot", "Scope", "Custom Dimension Name", "Description", "Where Set", "Notes"})
+	listTable.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
+	listTable.SetCenterSeparator("|")
+	listTable.AppendBulk(filteredList)
+	listTable.Render()
+
+	// Add a few new lines
+	io.WriteString(w, "\n\n")
+}
+
+func generateCustomMetricDoc(w io.Writer, config GuideConfig) {
+	_, titleTemplateFilename := path.Split(config.CustomMetrics.Template)
+	t := template.Must(template.New(titleTemplateFilename).ParseFiles(config.CustomMetrics.Template))
+	err := t.Execute(w, config)
+	if err != nil {
+		fmt.Println("Issue in trying to generate the custom dimension section of the GTM Guide")
+		fmt.Println(err.Error())
+	}
+
+	// Add a few new lines
+	io.WriteString(w, "\n\n")
+
+	// Generate the event table in markdown
+	listFile, err := os.Open(config.CustomMetrics.CustomMetricList)
+	if err != nil {
+		fmt.Println("Error in trying to find custom dimension list file")
+		fmt.Println(err.Error())
+	}
+	list, err := csv.NewReader(listFile).ReadAll()
+	if err != nil {
+		fmt.Println("Error when reading event list file")
+		fmt.Println(err.Error())
+	}
+	list = list[1:len(list)]
+	var filteredList [][]string
+	for _, row := range list {
+		filteredList = append(filteredList, row[1:len(row)])
+	}
+	listTable := tablewriter.NewWriter(w)
+	listTable.SetHeader([]string{"Slot", "Scope", "Formatting Type", "Custom Metrics Name", "Description", "Where Set", "Custom Metric Values", "Notes"})
+	listTable.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
+	listTable.SetCenterSeparator("|")
+	listTable.AppendBulk(filteredList)
+	listTable.Render()
+
+	// Add a few new lines
+	io.WriteString(w, "\n\n")
 }
