@@ -1,20 +1,25 @@
 package googleanalytics_test
 
 import (
-	"bytes"
+	"fmt"
 	"testing"
 
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics"
-	"gitlab.com/hairizuanbinnoorazman/automaton/helper"
+	analytics "google.golang.org/api/analytics/v3"
 )
 
-func TestCheckUnfilteredProfileAvailable(t *testing.T) {
-	client, _ := helper.GetClient("petaccount")
-	gaConfig, _ := helper.GetGAConfig("petaccount")
+func TestUnfilteredProfileAvailable(t *testing.T) {
+	var x []*analytics.Profile
+	var y []*analytics.ProfileFilterLink
+	z := googleanalytics.UnfilteredProfileAvailableData{
+		Profiles:           x,
+		ProfileFilterLinks: y}
+	nyaa := googleanalytics.NewUnfilteredProfileAvailable()
+	nyaa.Data = z
 
-	buf := bytes.NewBufferString("")
-	err = googleanalytics.CheckUnfilteredProfileAvailable(buf, client, gaConfig.AccountID, gaConfig.PropertyID, gaConfig.ProfileID)
-	if err != nil {
-		t.Fatalf("Expected the following account to be able to provide values. %v", err.Error())
-	}
+	nyaa.RunAudit()
+	fmt.Printf("%v\n", nyaa.Result)
+
+	//yea := make(map[string]audit.Auditor)
+
 }
