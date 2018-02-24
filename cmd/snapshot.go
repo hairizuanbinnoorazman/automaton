@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
 
 	"github.com/spf13/cobra"
 	"gitlab.com/hairizuanbinnoorazman/automaton/snapshot"
@@ -15,9 +16,18 @@ var (
 		Short: "Use this command to create a snapshot of your GA account",
 		Long:  `Not available yet`,
 		Run: func(cmd *cobra.Command, args []string) {
-			client := googleAnalyticsAuth(credFile)
+			cred, err := ioutil.ReadFile(credFile)
+			if err != nil {
+				fmt.Println(err.Error())
+				os.Exit(1)
+			}
+			client := googleAnalyticsAuth(cred)
 
-			config, _ := ioutil.ReadFile(cfgFile)
+			config, err := ioutil.ReadFile(cfgFile)
+			if err != nil {
+				fmt.Println(err.Error())
+				os.Exit(1)
+			}
 			type gaConfig struct {
 				GaAccountID  string
 				GaPropertyID string
