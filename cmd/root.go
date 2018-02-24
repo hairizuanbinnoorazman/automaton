@@ -34,11 +34,11 @@ func init() {
 	rootCmd.AddCommand(versionCmd)
 
 	rootCmd.AddCommand(snapshotCmd)
+	getSnapshotCmd()
 
 	rootCmd.AddCommand(guideCmd)
-
 	getGuideCmd()
-	getSnapshotCmd()
+
 }
 
 // Execute cli commands
