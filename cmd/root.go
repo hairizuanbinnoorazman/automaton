@@ -10,6 +10,7 @@ import (
 var (
 	cfgFile  string
 	credFile string
+	tool     string
 
 	rootCmd = &cobra.Command{
 		Use:   "automaton",
@@ -30,6 +31,9 @@ var (
 
 func init() {
 	cobra.OnInitialize(initConfig)
+
+	rootCmd.AddCommand(auditCmd)
+	getAuditCmd()
 
 	rootCmd.AddCommand(versionCmd)
 
