@@ -21,7 +21,7 @@ type auditItem struct {
 func createFileName(auditName string) string {
 	auditName = strings.ToLower(auditName)
 	auditName = strings.Replace(auditName, " ", "_", -1)
-	filename := fmt.Sprintf("/audit/googleanalytics/templates/%v.md", auditName)
+	filename := fmt.Sprintf("./audit/googleanalytics/templates/%v.md", auditName)
 	return filename
 }
 
