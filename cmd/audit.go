@@ -59,6 +59,13 @@ var (
 				return
 			}
 
+			file, err := os.Create(outputFile)
+			if err != nil {
+				fmt.Println("Error in creation of new file to store output")
+				fmt.Println(err.Error())
+			}
+			bufferedFile := bufio.NewWriter(file)
+
 			if tool == "ga" {
 				config := googleanalytics.Config{}
 				err = json.Unmarshal(configFile, &config)
@@ -66,15 +73,7 @@ var (
 					fmt.Println(fmt.Sprintf("Error in getting the json config. %v", err.Error()))
 					return
 				}
-
 				client := googleAnalyticsAuth(credFile)
-
-				file, err := os.Create(config.OutputFile)
-				if err != nil {
-					fmt.Println("Error in creation of new file to store output")
-					fmt.Println(err.Error())
-				}
-				bufferedFile := bufio.NewWriter(file)
 				googleanalytics.RunAudit(bufferedFile, client, config)
 				bufferedFile.Flush()
 			} else if tool == "gtm" {
@@ -94,4 +93,5 @@ func getAuditCmd() {
 	auditRunAuditCmd.Flags().StringVar(&tool, "tool", "ga", "Set the tool to be used for audit. The following would be available for use: ga, gtm")
 	auditRunAuditCmd.Flags().StringVar(&cfgFile, "config", "config.json", "Set the config file to be used to run the audit")
 	auditRunAuditCmd.Flags().StringVar(&credFile, "cred", "cred.json", "Set the cred file to be used to run the audit")
+	auditRunAuditCmd.Flags().StringVar(&outputFile, "output", "audit.md", "Set the output file name")
 }

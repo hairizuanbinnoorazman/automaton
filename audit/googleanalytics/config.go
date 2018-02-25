@@ -3,12 +3,10 @@ package googleanalytics
 import (
 	"fmt"
 	"strings"
-	"time"
 )
 
 // Config lists all the configurations that one would need when running in audit tests
 type Config struct {
-	OutputFile string      `json:"output_file"`
 	AuditItems []auditItem `json:"audit_items"`
 	AccountID  string      `json:"account_id"`
 	PropertyID string      `json:"property_id"`
@@ -23,14 +21,13 @@ type auditItem struct {
 func createFileName(auditName string) string {
 	auditName = strings.ToLower(auditName)
 	auditName = strings.Replace(auditName, " ", "_", -1)
-	filename := fmt.Sprintf("%v.md", auditName)
+	filename := fmt.Sprintf("/audit/googleanalytics/templates/%v.md", auditName)
 	return filename
 }
 
 // NewConfig returns a new configuration file that has default values which one can use to modify and append
 func NewConfig() Config {
 	newConfig := Config{
-		OutputFile: fmt.Sprintf("%v.md", time.Now().Format("20060102150405")),
 		AccountID:  "123456789",
 		PropertyID: "UA-123456789-1",
 		ProfileID:  "1234567890",

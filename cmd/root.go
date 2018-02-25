@@ -8,9 +8,10 @@ import (
 )
 
 var (
-	cfgFile  string
-	credFile string
-	tool     string
+	cfgFile    string
+	credFile   string
+	tool       string
+	outputFile string
 
 	rootCmd = &cobra.Command{
 		Use:   "automaton",
