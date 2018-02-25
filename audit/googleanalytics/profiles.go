@@ -1,7 +1,10 @@
 package googleanalytics
 
 import (
+	"fmt"
 	"io"
+	"path"
+	"text/template"
 
 	analytics "google.golang.org/api/analytics/v3"
 )
@@ -25,11 +28,21 @@ type UnfilteredProfileAvailable struct {
 func (a *UnfilteredProfileAvailable) RunAudit() error {
 	a.Result = UnfilteredProfileAvailableResult{
 		ProfileCount:               2,
-		UnfilteredProfileAvailable: true}
+		UnfilteredProfileAvailable: false}
 	return nil
 }
 
-func (a *UnfilteredProfileAvailable) RenderOutput(w io.Writer, template string) error {
+func (a *UnfilteredProfileAvailable) RenderOutput(w io.Writer, templateFile string) error {
+	_, templateFileValue := path.Split(templateFile)
+	t := template.Must(template.New(templateFileValue).ParseFiles(templateFile))
+	err := t.Execute(w, a)
+	if err != nil {
+		fmt.Println("Unable to render template")
+		fmt.Println(err.Error())
+		return err
+	}
+	// Add a few new lines
+	io.WriteString(w, "\n\n")
 	return nil
 }
 
