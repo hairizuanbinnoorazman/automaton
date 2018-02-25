@@ -36,6 +36,7 @@ func NewConfig() Config {
 	// Append the new audit items here - we will utilize the name generated from the default struct
 	var newAuditItems []auditItem
 	newAuditItems = append(newAuditItems, auditItem{Name: NewUnfilteredProfileAvailable().Metadata.Name, TemplateFile: createFileName(NewUnfilteredProfileAvailable().Metadata.Name)})
+	newAuditItems = append(newAuditItems, auditItem{Name: NewGoalUsage().Metadata.Name, TemplateFile: createFileName(NewGoalUsage().Metadata.Name)})
 
 	newConfig.AuditItems = newAuditItems
 	return newConfig

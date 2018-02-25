@@ -1,3 +1,0 @@
-package googleanalytics
-
-func CheckGoals() {}
