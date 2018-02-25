@@ -2,9 +2,14 @@
 package googleanalytics
 
 import (
+	"errors"
+	"fmt"
 	"io"
 	"net/http"
+	"path"
+	"text/template"
 
+	"gitlab.com/hairizuanbinnoorazman/automaton/audit"
 	analytics "google.golang.org/api/analytics/v3"
 	analyticsreporting "google.golang.org/api/analyticsreporting/v4"
 )
@@ -106,6 +111,32 @@ func extractGAMgmtData(client *http.Client, mgmtProperties []string, accountID, 
 	return newGaMgmtProperties, nil
 }
 
+func RenderOutput(w io.Writer, templateFile string, a audit.Auditor) error {
+	_, templateFileValue := path.Split(templateFile)
+	t := template.Must(template.New(templateFileValue).ParseFiles(templateFile))
+
+	var err error
+
+	switch tempStruct := a.(type) {
+	case *UnfilteredProfileAvailable:
+		err = t.Execute(w, tempStruct)
+	case *GoalUsage:
+		err = t.Execute(w, tempStruct)
+	default:
+		err := errors.New("Unable to find the type definition of the audit")
+		return err
+	}
+
+	if err != nil {
+		fmt.Println("Unable to render template")
+		fmt.Println(err.Error())
+		return err
+	}
+	// Add a few new lines
+	io.WriteString(w, "\n\n")
+	return nil
+}
+
 func RunAudit(w io.Writer, client *http.Client, config Config) error {
 	var auditItemNames []string
 	for _, x := range config.AuditItems {
@@ -125,7 +156,19 @@ func RunAudit(w io.Writer, client *http.Client, config Config) error {
 			temp := NewUnfilteredProfileAvailable()
 			temp.Data = UnfilteredProfileAvailableData{Profiles: mgmtData.Profiles, ProfileFilterLinks: mgmtData.ProfileFilterLinks}
 			temp.RunAudit()
-			temp.RenderOutput(w, item.TemplateFile)
+			err = RenderOutput(w, item.TemplateFile, &temp)
+			if err != nil {
+				return err
+			}
+		}
+		if item.Name == NewGoalUsage().Metadata.Name {
+			temp := NewGoalUsage()
+			temp.Data = GoalUsageData{Goals: mgmtData.Goals}
+			temp.RunAudit()
+			err = RenderOutput(w, item.TemplateFile, &temp)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
