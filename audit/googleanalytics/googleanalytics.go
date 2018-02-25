@@ -19,6 +19,8 @@ const profiles = "profiles"
 const filters = "filters"
 const goals = "goals"
 const profileFilterLinks = "profileFilterLinks"
+const customdimensions = "customDimensions"
+const custommetrics = "customMetrics"
 
 type dataExtractors struct {
 	GaMgmtProperties []string
@@ -122,6 +124,8 @@ func RenderOutput(w io.Writer, templateFile string, a audit.Auditor) error {
 		err = t.Execute(w, tempStruct)
 	case *GoalUsage:
 		err = t.Execute(w, tempStruct)
+	case *CustomDimMetricUsage:
+		err = t.Execute(w, tempStruct)
 	default:
 		err := errors.New("Unable to find the type definition of the audit")
 		return err
@@ -164,6 +168,15 @@ func RunAudit(w io.Writer, client *http.Client, config Config) error {
 		if item.Name == NewGoalUsage().Metadata.Name {
 			temp := NewGoalUsage()
 			temp.Data = GoalUsageData{Goals: mgmtData.Goals}
+			temp.RunAudit()
+			err = RenderOutput(w, item.TemplateFile, &temp)
+			if err != nil {
+				return err
+			}
+		}
+		if item.Name == NewCustomDimMetricUsage().Metadata.Name {
+			temp := NewCustomDimMetricUsage()
+			temp.Data = CustomDimMetricUsageData{CustomDimensions: mgmtData.CustomDimensions, CustomMetrics: mgmtData.CustomMetrics}
 			temp.RunAudit()
 			err = RenderOutput(w, item.TemplateFile, &temp)
 			if err != nil {

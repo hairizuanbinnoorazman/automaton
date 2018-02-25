@@ -37,6 +37,7 @@ func NewConfig() Config {
 	var newAuditItems []auditItem
 	newAuditItems = append(newAuditItems, auditItem{Name: NewUnfilteredProfileAvailable().Metadata.Name, TemplateFile: createFileName(NewUnfilteredProfileAvailable().Metadata.Name)})
 	newAuditItems = append(newAuditItems, auditItem{Name: NewGoalUsage().Metadata.Name, TemplateFile: createFileName(NewGoalUsage().Metadata.Name)})
+	newAuditItems = append(newAuditItems, auditItem{Name: NewCustomDimMetricUsage().Metadata.Name, TemplateFile: createFileName(NewCustomDimMetricUsage().Metadata.Name)})
 
 	newConfig.AuditItems = newAuditItems
 	return newConfig
