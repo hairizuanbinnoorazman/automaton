@@ -22,7 +22,7 @@ type UnfilteredProfileAvailable struct {
 
 func (a *UnfilteredProfileAvailable) RunAudit() error {
 	a.Result = UnfilteredProfileAvailableResult{
-		ProfileCount:               2,
+		ProfileCount:               len(a.Data.Profiles),
 		UnfilteredProfileAvailable: false}
 	return nil
 }
