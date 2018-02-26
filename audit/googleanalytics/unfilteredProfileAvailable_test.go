@@ -19,7 +19,4 @@ func TestUnfilteredProfileAvailable(t *testing.T) {
 
 	nyaa.RunAudit()
 	fmt.Printf("%v\n", nyaa.Result)
-
-	//yea := make(map[string]audit.Auditor)
-
 }
