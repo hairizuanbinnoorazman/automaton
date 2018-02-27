@@ -1,22 +1,39 @@
 package googleanalytics_test
 
 import (
-	"fmt"
+	"encoding/json"
+	"reflect"
 	"testing"
 
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics"
 	analytics "google.golang.org/api/analytics/v3"
 )
 
-func TestUnfilteredProfileAvailable(t *testing.T) {
-	var x []*analytics.Profile
-	var y []*analytics.ProfileFilterLink
-	z := googleanalytics.UnfilteredProfileAvailableData{
-		Profiles:           x,
-		ProfileFilterLinks: y}
-	nyaa := googleanalytics.NewUnfilteredProfileAvailable()
-	nyaa.Data = z
+type TestUnfilteredProfileAvailableList struct {
+	Name           string
+	InputData      googleanalytics.UnfilteredProfileAvailableData
+	ExpectedOutput googleanalytics.UnfilteredProfileAvailableResult
+}
 
-	nyaa.RunAudit()
-	fmt.Printf("%v\n", nyaa.Result)
+func TestUnfilteredProfileAvailable(t *testing.T) {
+	testLists := []TestUnfilteredProfileAvailableList{
+		TestUnfilteredProfileAvailableList{
+			Name:           "Zeroth Test",
+			InputData:      googleanalytics.UnfilteredProfileAvailableData{Profiles: []*analytics.Profile{}, ProfileFilterLinks: []*analytics.ProfileFilterLink{}},
+			ExpectedOutput: googleanalytics.UnfilteredProfileAvailableResult{ProfileCount: 0, UnfilteredProfileAvailable: false},
+		},
+	}
+
+	for _, singleTest := range testLists {
+		newUnfilteredProfileAvailable := googleanalytics.NewUnfilteredProfileAvailable()
+		newUnfilteredProfileAvailable.Data = singleTest.InputData
+		newUnfilteredProfileAvailable.RunAudit()
+		equalityTest := reflect.DeepEqual(newUnfilteredProfileAvailable.Result, singleTest.ExpectedOutput)
+		if equalityTest == false {
+			expectedValue, _ := json.MarshalIndent(singleTest.ExpectedOutput, "", "\t")
+			actualValue, _ := json.MarshalIndent(newUnfilteredProfileAvailable.Result, "", "\t")
+			t.Errorf("Error in executing the following test: %v. \nExpected Value: %v. \nActual Value: %v",
+				singleTest.Name, string(expectedValue), string(actualValue))
+		}
+	}
 }
