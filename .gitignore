@@ -1,0 +1,6 @@
+# Ignore json config files
+*.json
+
+# Ignore
+vendor
+
