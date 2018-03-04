@@ -1,6 +1,8 @@
 package googleanalytics
 
-import analytics "google.golang.org/api/analytics/v3"
+import (
+	analytics "google.golang.org/api/analytics/v3"
+)
 
 type CustomDimMetricUsageData struct {
 	CustomDimensions []*analytics.CustomDimension
