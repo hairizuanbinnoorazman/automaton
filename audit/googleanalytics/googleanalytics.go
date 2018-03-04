@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"path"
 	"text/template"
+	"time"
 
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit"
 	analytics "google.golang.org/api/analytics/v3"
@@ -22,15 +23,15 @@ const profileFilterLinks = "profileFilterLinks"
 const customdimensions = "customDimensions"
 const custommetrics = "customMetrics"
 
-type dataExtractors struct {
-	GaMgmtProperties []string
-	GaDataProperties []*analyticsreporting.ReportRequest
-}
-
 type metadata struct {
 	Name           string
 	Description    string
 	DataExtractors dataExtractors
+}
+
+type dataExtractors struct {
+	GaMgmtProperties []string
+	GaDataProperties []*analyticsreporting.ReportRequest
 }
 
 type gaMgmtProperties struct {
@@ -46,6 +47,11 @@ func getManagementService(client *http.Client) *analytics.ManagementService {
 	analyticsService, _ := analytics.New(client)
 	managementService := analytics.NewManagementService(analyticsService)
 	return managementService
+}
+
+func getGADataService(client *http.Client) *analyticsreporting.Service {
+	analyticsDataService, _ := analyticsreporting.New(client)
+	return analyticsDataService
 }
 
 func resolveExtractors(overallDataExtractor, singleDataExtractor dataExtractors) dataExtractors {
@@ -120,8 +126,6 @@ func RenderOutput(w io.Writer, templateFile string, a audit.Auditor) error {
 	var err error
 
 	switch tempStruct := a.(type) {
-	case *UnfilteredProfileAvailable:
-		err = t.Execute(w, tempStruct)
 	case *GoalUsage:
 		err = t.Execute(w, tempStruct)
 	case *CustomDimMetricUsage:
@@ -156,15 +160,6 @@ func RunAudit(w io.Writer, client *http.Client, config Config) error {
 	}
 
 	for _, item := range config.AuditItems {
-		if item.Name == NewUnfilteredProfileAvailable().Metadata.Name {
-			temp := NewUnfilteredProfileAvailable()
-			temp.Data = UnfilteredProfileAvailableData{Profiles: mgmtData.Profiles, ProfileFilterLinks: mgmtData.ProfileFilterLinks}
-			temp.RunAudit()
-			err = RenderOutput(w, item.TemplateFile, &temp)
-			if err != nil {
-				return err
-			}
-		}
 		if item.Name == NewGoalUsage().Metadata.Name {
 			temp := NewGoalUsage()
 			temp.Data = GoalUsageData{Goals: mgmtData.Goals}
@@ -183,6 +178,85 @@ func RunAudit(w io.Writer, client *http.Client, config Config) error {
 				return err
 			}
 		}
+	}
+
+	return nil
+}
+
+type DataExtractor interface {
+	Extract(client *http.Client, params interface{}) error
+}
+
+type MgmtParams struct {
+	AccountID  string
+	PropertyID string
+	ProfileID  string
+	MgmtItems  []string
+}
+
+type GaMgmtExtractor struct {
+	Data gaMgmtProperties
+}
+
+func (e GaMgmtExtractor) Extract(client *http.Client, params interface{}) error {
+	mgmtParams := params.(MgmtParams)
+	accountID := mgmtParams.AccountID
+	propertyID := mgmtParams.PropertyID
+	profileID := mgmtParams.ProfileID
+
+	mgmtService := getManagementService(client)
+
+	for _, item := range mgmtParams.MgmtItems {
+		if item == profiles {
+			profileData, err := mgmtService.Profiles.List(accountID, propertyID).Do()
+			if err != nil {
+				return err
+			}
+			e.Data.Profiles = profileData.Items
+		}
+		if item == goals {
+			goalData, err := mgmtService.Goals.List(accountID, propertyID, profileID).Do()
+			if err != nil {
+				return err
+			}
+			e.Data.Goals = goalData.Items
+		}
+		if item == profileFilterLinks {
+			profileFilterLinksData, err := mgmtService.ProfileFilterLinks.List(accountID, propertyID, profileID).Do()
+			if err != nil {
+				return err
+			}
+			e.Data.ProfileFilterLinks = profileFilterLinksData.Items
+		}
+	}
+	return nil
+}
+
+type GaDataParams struct {
+	ProfileID     string
+	StartDate     time.Time
+	EndDate       time.Time
+	ReportRequest []*analyticsreporting.ReportRequest
+}
+
+type GaDataExtractor struct {
+	Data []*analyticsreporting.GetReportsResponse
+}
+
+func (e GaDataExtractor) Extract(client *http.Client, params interface{}) error {
+	gaDataParams := params.(GaDataParams)
+
+	dataService := getGADataService(client)
+
+	for _, req := range gaDataParams.ReportRequest {
+		reportReq := analyticsreporting.GetReportsRequest{
+			ReportRequests: []*analyticsreporting.ReportRequest{req},
+		}
+		response, err := dataService.Reports.BatchGet(&reportReq).Do()
+		if err != nil {
+			return err
+		}
+		e.Data = append(e.Data, response)
 	}
 
 	return nil
