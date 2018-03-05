@@ -34,7 +34,7 @@ type dataExtractors struct {
 	GaDataProperties []*analyticsreporting.ReportRequest
 }
 
-type gaMgmtProperties struct {
+type GaMgmtProperties struct {
 	Profiles           []*analytics.Profile
 	Filters            []*analytics.Filter
 	ProfileFilterLinks []*analytics.ProfileFilterLink
@@ -86,15 +86,15 @@ func prepDataExtraction(auditItems []string) (dataExtractors, error) {
 	return newDataExtractor, nil
 }
 
-func extractGAMgmtData(client *http.Client, mgmtProperties []string, accountID, propertyID, profileID string) (gaMgmtProperties, error) {
-	var newGaMgmtProperties gaMgmtProperties
+func extractGAMgmtData(client *http.Client, mgmtProperties []string, accountID, propertyID, profileID string) (GaMgmtProperties, error) {
+	var newGaMgmtProperties GaMgmtProperties
 	mgmtService := getManagementService(client)
 
 	for _, item := range mgmtProperties {
 		if item == profiles {
 			profileData, err := mgmtService.Profiles.List(accountID, propertyID).Do()
 			if err != nil {
-				var temp gaMgmtProperties
+				var temp GaMgmtProperties
 				return temp, err
 			}
 			newGaMgmtProperties.Profiles = profileData.Items
@@ -102,7 +102,7 @@ func extractGAMgmtData(client *http.Client, mgmtProperties []string, accountID, 
 		if item == goals {
 			goalData, err := mgmtService.Goals.List(accountID, propertyID, profileID).Do()
 			if err != nil {
-				var temp gaMgmtProperties
+				var temp GaMgmtProperties
 				return temp, err
 			}
 			newGaMgmtProperties.Goals = goalData.Items
@@ -110,7 +110,7 @@ func extractGAMgmtData(client *http.Client, mgmtProperties []string, accountID, 
 		if item == profileFilterLinks {
 			profileFilterLinksData, err := mgmtService.ProfileFilterLinks.List(accountID, propertyID, profileID).Do()
 			if err != nil {
-				var temp gaMgmtProperties
+				var temp GaMgmtProperties
 				return temp, err
 			}
 			newGaMgmtProperties.ProfileFilterLinks = profileFilterLinksData.Items
@@ -195,7 +195,7 @@ type MgmtParams struct {
 }
 
 type GaMgmtExtractor struct {
-	Data gaMgmtProperties
+	Data GaMgmtProperties
 }
 
 func (e GaMgmtExtractor) Extract(client *http.Client, params interface{}) error {
