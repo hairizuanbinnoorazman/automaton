@@ -30,6 +30,7 @@ type UnfilteredProfileAvailable struct {
 // be extracted in a 2 way fashion:
 //
 // 1. Extract the data from management settings state
+//
 // 2. Extract the data from Google Analytics data which dependes on the management settings state
 //
 // To make it flexible, we would need to only expose the Do function. But internally the functionality

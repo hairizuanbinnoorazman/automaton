@@ -60,6 +60,22 @@ Command coming soon
 
 # Contributing to the project
 
+## Quick notes
+
+In order to increase interoperatability between structs esp in the audit object etc, it seems to make sense that the structs follow roughly the same following structure within the same struct:
+- Parameters to be used to run the algorithm
+- Results to be stored after running the algorithm
+
+With that, it would allow us to do have the following benefits:
+- Our parameters can have its own struct of data - certain audits can have a hefty amount of structs
+- Our response can have its own struct of data - each audit will implement its own type of data
+- These aggregated data will then be passed into the cmd package that will then be used to render the data out
+- These prevents out interfaces from going into scenarios of requiring `interface{}` in order to accept certain parameters etc. It won't matter too much if its already dumped into the struct.
+- Follow the same style throughout the code base:
+  - All data needed for the algorithm colocated with algo
+  - All result dumped into the same algorithm
+  - (Need to ensure this) Any rerunning of the algorithm will always lead to the same result
+
 ## Interesting libraries to utilize
 
 1. https://github.com/fatih/structs
