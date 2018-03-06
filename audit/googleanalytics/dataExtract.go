@@ -9,8 +9,11 @@ import (
 
 // DataExtractor interface.
 // This is the generic interface to ensure that the data being passed around the google analytics methods
+// In order to allow differing behaviours during runtime, we would allow the user to provide the client
+// struct which would alter the behaviour of the struct - Providing a real client would lead to calling
+// APIs but it also becomes possible to provide mocks for testing
 type DataExtractor interface {
-	Extract(client *http.Client, params interface{}) error
+	Extract(client *http.Client) error
 }
 
 // GaMgmtParams struct is the parameters which is used to extract management settings data from
@@ -25,41 +28,41 @@ type GaMgmtParams struct {
 // GaMgmtExtractor struct is the main struct that would be used to store information after the extract has been
 // extracted
 type GaMgmtExtractor struct {
-	Data GaMgmtProperties
+	Params  GaMgmtParams
+	Results GaMgmtProperties
 }
 
 // Extract function attached to the GaMgmtExtractor struct.
 // This function would extract the Google Analytics data and then store it into the internal dataset
 // Data is not returned but instead pulled out of the initialized struct
-func (e *GaMgmtExtractor) Extract(client *http.Client, params interface{}) error {
-	mgmtParams := params.(GaMgmtParams)
-	accountID := mgmtParams.AccountID
-	propertyID := mgmtParams.PropertyID
-	profileID := mgmtParams.ProfileID
+func (e *GaMgmtExtractor) Extract(client *http.Client) error {
+	accountID := e.Params.AccountID
+	propertyID := e.Params.PropertyID
+	profileID := e.Params.ProfileID
 
 	mgmtService := getManagementService(client)
 
-	for _, item := range mgmtParams.MgmtItems {
+	for _, item := range e.Params.MgmtItems {
 		if item == profiles {
 			profileData, err := mgmtService.Profiles.List(accountID, propertyID).Do()
 			if err != nil {
 				return err
 			}
-			e.Data.Profiles = profileData.Items
+			e.Results.Profiles = profileData.Items
 		}
 		if item == goals {
 			goalData, err := mgmtService.Goals.List(accountID, propertyID, profileID).Do()
 			if err != nil {
 				return err
 			}
-			e.Data.Goals = goalData.Items
+			e.Results.Goals = goalData.Items
 		}
 		if item == profileFilterLinks {
 			profileFilterLinksData, err := mgmtService.ProfileFilterLinks.List(accountID, propertyID, profileID).Do()
 			if err != nil {
 				return err
 			}
-			e.Data.ProfileFilterLinks = profileFilterLinksData.Items
+			e.Results.ProfileFilterLinks = profileFilterLinksData.Items
 		}
 	}
 	return nil
@@ -71,15 +74,14 @@ type GaDataParams struct {
 }
 
 type GaDataExtractor struct {
-	Data []*analyticsreporting.GetReportsResponse
+	Params  GaDataParams
+	Results []*analyticsreporting.GetReportsResponse
 }
 
-func (e *GaDataExtractor) Extract(client *http.Client, params interface{}) error {
-	gaDataParams := params.(GaDataParams)
-
+func (e *GaDataExtractor) Extract(client *http.Client) error {
 	dataService := getGADataService(client)
 
-	for _, req := range gaDataParams.ReportRequest {
+	for _, req := range e.Params.ReportRequest {
 		reportReq := analyticsreporting.GetReportsRequest{
 			ReportRequests: []*analyticsreporting.ReportRequest{req},
 		}
@@ -91,7 +93,7 @@ func (e *GaDataExtractor) Extract(client *http.Client, params interface{}) error
 			return errors.New("Unable to get values")
 		}
 
-		e.Data = append(e.Data, response)
+		e.Results = append(e.Results, response)
 	}
 
 	return nil
