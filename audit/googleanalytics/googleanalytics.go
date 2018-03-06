@@ -1,4 +1,5 @@
-// Package googleanalytics
+// Package googleanalytics within the audit package provides the functionality for running Google
+// Analytics audits with respect to some of the common best practises in the market
 package googleanalytics
 
 import (
