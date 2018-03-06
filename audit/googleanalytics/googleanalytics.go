@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"path"
 	"text/template"
-	"time"
 
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit"
 	analytics "google.golang.org/api/analytics/v3"
@@ -198,7 +197,7 @@ type GaMgmtExtractor struct {
 	Data GaMgmtProperties
 }
 
-func (e GaMgmtExtractor) Extract(client *http.Client, params interface{}) error {
+func (e *GaMgmtExtractor) Extract(client *http.Client, params interface{}) error {
 	mgmtParams := params.(MgmtParams)
 	accountID := mgmtParams.AccountID
 	propertyID := mgmtParams.PropertyID
@@ -233,9 +232,6 @@ func (e GaMgmtExtractor) Extract(client *http.Client, params interface{}) error 
 }
 
 type GaDataParams struct {
-	ProfileID     string
-	StartDate     time.Time
-	EndDate       time.Time
 	ReportRequest []*analyticsreporting.ReportRequest
 }
 
@@ -243,7 +239,7 @@ type GaDataExtractor struct {
 	Data []*analyticsreporting.GetReportsResponse
 }
 
-func (e GaDataExtractor) Extract(client *http.Client, params interface{}) error {
+func (e *GaDataExtractor) Extract(client *http.Client, params interface{}) error {
 	gaDataParams := params.(GaDataParams)
 
 	dataService := getGADataService(client)
@@ -256,6 +252,10 @@ func (e GaDataExtractor) Extract(client *http.Client, params interface{}) error 
 		if err != nil {
 			return err
 		}
+		if response.HTTPStatusCode != 200 {
+			return errors.New("Unable to get values")
+		}
+
 		e.Data = append(e.Data, response)
 	}
 
