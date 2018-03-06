@@ -1,5 +1,7 @@
 // Package googleanalytics within the audit package provides the functionality for running Google
-// Analytics audits with respect to some of the common best practises in the market
+// Analytics audits with respect to some of the common best practises in the market. As time goes
+// by and if there are new and better ways of looking at the data and if new approaches to data
+// appear then, these practises would then slowly be embedded into the package
 package googleanalytics
 
 import (
