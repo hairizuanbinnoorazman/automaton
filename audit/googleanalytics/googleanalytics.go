@@ -121,6 +121,7 @@ func extractGAMgmtData(client *http.Client, mgmtProperties []string, accountID, 
 	return newGaMgmtProperties, nil
 }
 
+// RenderOutput function will be moved from this package to the cmd package.
 func RenderOutput(w io.Writer, templateFile string, a audit.Auditor) error {
 	_, templateFileValue := path.Split(templateFile)
 	t := template.Must(template.New(templateFileValue).ParseFiles(templateFile))
@@ -180,86 +181,6 @@ func RunAudit(w io.Writer, client *http.Client, config Config) error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-type DataExtractor interface {
-	Extract(client *http.Client, params interface{}) error
-}
-
-type MgmtParams struct {
-	AccountID  string
-	PropertyID string
-	ProfileID  string
-	MgmtItems  []string
-}
-
-type GaMgmtExtractor struct {
-	Data GaMgmtProperties
-}
-
-func (e *GaMgmtExtractor) Extract(client *http.Client, params interface{}) error {
-	mgmtParams := params.(MgmtParams)
-	accountID := mgmtParams.AccountID
-	propertyID := mgmtParams.PropertyID
-	profileID := mgmtParams.ProfileID
-
-	mgmtService := getManagementService(client)
-
-	for _, item := range mgmtParams.MgmtItems {
-		if item == profiles {
-			profileData, err := mgmtService.Profiles.List(accountID, propertyID).Do()
-			if err != nil {
-				return err
-			}
-			e.Data.Profiles = profileData.Items
-		}
-		if item == goals {
-			goalData, err := mgmtService.Goals.List(accountID, propertyID, profileID).Do()
-			if err != nil {
-				return err
-			}
-			e.Data.Goals = goalData.Items
-		}
-		if item == profileFilterLinks {
-			profileFilterLinksData, err := mgmtService.ProfileFilterLinks.List(accountID, propertyID, profileID).Do()
-			if err != nil {
-				return err
-			}
-			e.Data.ProfileFilterLinks = profileFilterLinksData.Items
-		}
-	}
-	return nil
-}
-
-type GaDataParams struct {
-	ReportRequest []*analyticsreporting.ReportRequest
-}
-
-type GaDataExtractor struct {
-	Data []*analyticsreporting.GetReportsResponse
-}
-
-func (e *GaDataExtractor) Extract(client *http.Client, params interface{}) error {
-	gaDataParams := params.(GaDataParams)
-
-	dataService := getGADataService(client)
-
-	for _, req := range gaDataParams.ReportRequest {
-		reportReq := analyticsreporting.GetReportsRequest{
-			ReportRequests: []*analyticsreporting.ReportRequest{req},
-		}
-		response, err := dataService.Reports.BatchGet(&reportReq).Do()
-		if err != nil {
-			return err
-		}
-		if response.HTTPStatusCode != 200 {
-			return errors.New("Unable to get values")
-		}
-
-		e.Data = append(e.Data, response)
 	}
 
 	return nil
