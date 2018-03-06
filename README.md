@@ -75,6 +75,7 @@ With that, it would allow us to do have the following benefits:
   - All data needed for the algorithm colocated with algo
   - All result dumped into the same algorithm
   - (Need to ensure this) Any rerunning of the algorithm will always lead to the same result
+  - If there is a need to alter the behaviour, then use interfaces to change it. E.g. The audit object would take in differing clients which allows it to switch between actual extraction from API or mocking extraction via tests.
 
 ## Interesting libraries to utilize
 
