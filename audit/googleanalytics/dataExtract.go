@@ -73,11 +73,15 @@ type GaDataParams struct {
 	ReportRequest []*analyticsreporting.ReportRequest
 }
 
+// GaDataExtractor is the struct for managing the Google Analytics Data extraction method
 type GaDataExtractor struct {
 	Params  GaDataParams
 	Results []*analyticsreporting.GetReportsResponse
 }
 
+// Extract function attached to the GaDataExtractor struct.
+// This function would extract the Google Analytics data and then store it into the internal dataset
+// Data is not returned but instead should be pulled out of the initialized struct
 func (e *GaDataExtractor) Extract(client *http.Client) error {
 	dataService := getGADataService(client)
 
