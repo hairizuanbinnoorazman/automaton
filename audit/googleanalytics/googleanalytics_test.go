@@ -3,17 +3,18 @@ package googleanalytics_test
 
 import (
 	"io/ioutil"
+	"log"
 	"testing"
 	"time"
 
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics"
-	"gitlab.com/hairizuanbinnoorazman/automaton/cmd"
+	"gitlab.com/hairizuanbinnoorazman/automaton/helper"
 	analyticsreporting "google.golang.org/api/analyticsreporting/v4"
 )
 
 type TestGaMgmtExtractorInput struct {
 	Name   string
-	Input  googleanalytics.MgmtParams
+	Input  googleanalytics.GaMgmtParams
 	Output googleanalytics.GaMgmtProperties
 }
 
@@ -30,7 +31,6 @@ func TestGaMgmtExtractor(t *testing.T) {
 	// 		Output: googleanalytics.GaMgmtProperties{},
 	// 	},
 	// },
-
 }
 
 type TestGaDataExtractorInput struct {
@@ -69,13 +69,22 @@ func TestGaDataExtractor(t *testing.T) {
 	}
 
 	for _, testCase := range testData {
-		cred, _ := ioutil.ReadFile("cred.json")
-		client := cmd.GoogleAnalyticsReportingAuth(cred)
-		input := googleanalytics.GaDataParams{ReportRequest: testCase.Input.ReportRequest}
-		lol := googleanalytics.GaDataExtractor{}
-		lol.Extract(client, input)
-		t.Error(lol.Data[0].HTTPStatusCode)
-		t.Error(len(lol.Data[0].Reports))
-		t.Error(lol.Data[0].Reports[0].Data.RowCount)
+		// Read the cred file
+		cred, err := ioutil.ReadFile("cred.json")
+		if err != nil {
+			log.Printf("Error in loading file. %s", err.Error())
+			return
+		}
+
+		// Get the client
+		client := helper.GoogleAnalyticsReportingAuth(cred)
+
+		// Prep the data extraction
+		extractor := googleanalytics.GaDataExtractor{}
+		extractor.Params = googleanalytics.GaDataParams{ReportRequest: testCase.Input.ReportRequest}
+		extractor.Extract(client)
+
+		// Test the data structures within it
+		// Undergoing required changes
 	}
 }
