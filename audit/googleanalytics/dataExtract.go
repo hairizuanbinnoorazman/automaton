@@ -71,13 +71,13 @@ func (e *GaMgmtExtractor) Extract(client *http.Client) error {
 
 // GaDataParams is the struct for the parameters of the Google Analytics Data extraction
 type GaDataParams struct {
-	ReportRequest []*analyticsreporting.ReportRequest
+	ReportRequest map[string][]*analyticsreporting.ReportRequest
 }
 
 // GaDataExtractor is the struct for managing the Google Analytics Data extraction method
 type GaDataExtractor struct {
 	Params  GaDataParams
-	Results []*analyticsreporting.GetReportsResponse
+	Results map[string][]*analyticsreporting.GetReportsResponse
 }
 
 // Extract function attached to the GaDataExtractor struct.
@@ -86,9 +86,9 @@ type GaDataExtractor struct {
 func (e *GaDataExtractor) Extract(client *http.Client) error {
 	dataService := getGADataService(client)
 
-	for _, req := range e.Params.ReportRequest {
+	for name, req := range e.Params.ReportRequest {
 		reportReq := analyticsreporting.GetReportsRequest{
-			ReportRequests: []*analyticsreporting.ReportRequest{req},
+			ReportRequests: []*analyticsreporting.ReportRequest{req[0]},
 		}
 		response, err := dataService.Reports.BatchGet(&reportReq).Do()
 		if err != nil {
@@ -99,8 +99,7 @@ func (e *GaDataExtractor) Extract(client *http.Client) error {
 			return errors.New("Unable to get values")
 		}
 
-		e.Results = append(e.Results, response)
+		e.Results[name] = append(e.Results[name], response)
 	}
-
 	return nil
 }
