@@ -2,6 +2,7 @@ package googleanalytics
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	analyticsreporting "google.golang.org/api/analyticsreporting/v4"
@@ -91,6 +92,7 @@ func (e *GaDataExtractor) Extract(client *http.Client) error {
 		}
 		response, err := dataService.Reports.BatchGet(&reportReq).Do()
 		if err != nil {
+			fmt.Println(err.Error())
 			return err
 		}
 		if response.HTTPStatusCode != 200 {
