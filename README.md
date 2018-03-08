@@ -71,11 +71,15 @@ With that, it would allow us to do have the following benefits:
 - Our response can have its own struct of data - each audit will implement its own type of data
 - These aggregated data will then be passed into the cmd package that will then be used to render the data out
 - These prevents out interfaces from going into scenarios of requiring `interface{}` in order to accept certain parameters etc. It won't matter too much if its already dumped into the struct.
-- Follow the same style throughout the code base:
+- As much as possible, follow the same style throughout the code base:
   - All data needed for the algorithm colocated with algo
   - All result dumped into the same algorithm
   - (Need to ensure this) Any rerunning of the algorithm will always lead to the same result
   - If there is a need to alter the behaviour, then use interfaces to change it. E.g. The audit object would take in differing clients which allows it to switch between actual extraction from API or mocking extraction via tests.
+- For any functions that need to connect to external APIs
+  - Rather than providing a single struct with the data attached to call and retrieve the data, it would make more sense to actually provide an interface instead. 
+  - Depending on how we want much of the implementation we would want to externalize, we can either have the user define the data in a struct and use it from there or, we can provide an interface which contains many params - this would then take the data and use it for connecting to the API.
+- A tip from going through many changes in the code base - it actually makes plenty of sense to not generalize the interfaces too much. Rather than creating a very generalized interface, smaller and more specialized interfaces work as well
 
 ## Interesting libraries to utilize
 

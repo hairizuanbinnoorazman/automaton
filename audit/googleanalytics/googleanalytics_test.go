@@ -43,23 +43,25 @@ func TestGaDataExtractor(t *testing.T) {
 		TestGaDataExtractorInput{
 			Name: "Initial Case",
 			Input: googleanalytics.GaDataParams{
-				ReportRequest: []*analyticsreporting.ReportRequest{
-					&analyticsreporting.ReportRequest{
-						DateRanges: []*analyticsreporting.DateRange{
-							&analyticsreporting.DateRange{
-								StartDate: time.Now().AddDate(0, 0, -14).Format("2006-01-02"),
-								EndDate:   time.Now().Format("2006-01-02"),
+				ReportRequest: map[string][]*analyticsreporting.ReportRequest{
+					"test": []*analyticsreporting.ReportRequest{
+						&analyticsreporting.ReportRequest{
+							DateRanges: []*analyticsreporting.DateRange{
+								&analyticsreporting.DateRange{
+									StartDate: time.Now().AddDate(0, 0, -14).Format("2006-01-02"),
+									EndDate:   time.Now().Format("2006-01-02"),
+								},
 							},
-						},
-						ViewId: "",
-						Dimensions: []*analyticsreporting.Dimension{
-							&analyticsreporting.Dimension{
-								Name: "ga:source",
+							ViewId: "",
+							Dimensions: []*analyticsreporting.Dimension{
+								&analyticsreporting.Dimension{
+									Name: "ga:source",
+								},
 							},
-						},
-						Metrics: []*analyticsreporting.Metric{
-							&analyticsreporting.Metric{
-								Expression: "ga:users",
+							Metrics: []*analyticsreporting.Metric{
+								&analyticsreporting.Metric{
+									Expression: "ga:users",
+								},
 							},
 						},
 					},
