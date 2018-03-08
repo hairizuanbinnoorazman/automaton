@@ -33,7 +33,7 @@ type metadata struct {
 
 type dataExtractors struct {
 	GaMgmtProperties []string
-	GaDataProperties []*analyticsreporting.ReportRequest
+	GaDataProperties map[string][]*analyticsreporting.ReportRequest
 }
 
 type GaMgmtProperties struct {
@@ -122,6 +122,7 @@ func extractGAMgmtData(client *http.Client, mgmtProperties []string, accountID, 
 }
 
 // RenderOutput function will be moved from this package to the cmd package.
+// Current render output here will be depreciated; rendering should not be done on the domain level
 func RenderOutput(w io.Writer, templateFile string, a audit.Auditor) error {
 	_, templateFileValue := path.Split(templateFile)
 	t := template.Must(template.New(templateFileValue).ParseFiles(templateFile))
@@ -129,8 +130,6 @@ func RenderOutput(w io.Writer, templateFile string, a audit.Auditor) error {
 	var err error
 
 	switch tempStruct := a.(type) {
-	case *GoalUsage:
-		err = t.Execute(w, tempStruct)
 	case *CustomDimMetricUsage:
 		err = t.Execute(w, tempStruct)
 	default:
@@ -163,15 +162,17 @@ func RunAudit(w io.Writer, client *http.Client, config Config) error {
 	}
 
 	for _, item := range config.AuditItems {
-		if item.Name == NewGoalUsage().Metadata.Name {
-			temp := NewGoalUsage()
-			temp.Data = GoalUsageData{Goals: mgmtData.Goals}
-			temp.RunAudit()
-			err = RenderOutput(w, item.TemplateFile, &temp)
-			if err != nil {
-				return err
-			}
-		}
+		// Prep for depreciation
+		//
+		// if item.Name == NewGoalUsage().Metadata.Name {
+		// 	temp := NewGoalUsage()
+		// 	temp.Data = GoalUsageData{Goals: mgmtData.Goals}
+		// 	temp.RunAudit()
+		// 	err = RenderOutput(w, item.TemplateFile, &temp)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// }
 		if item.Name == NewCustomDimMetricUsage().Metadata.Name {
 			temp := NewCustomDimMetricUsage()
 			temp.Data = CustomDimMetricUsageData{CustomDimensions: mgmtData.CustomDimensions, CustomMetrics: mgmtData.CustomMetrics}
