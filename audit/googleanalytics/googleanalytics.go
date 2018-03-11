@@ -42,26 +42,39 @@ type auditDetails struct {
 }
 
 func (a *auditDetails) validate() error {
+	var errList []string
 	if a.AccountID == "" {
-		return errors.New("Missing parameters: Account ID")
+		errList = append(errList, "Account ID")
 	}
 	if a.PropertyID == "" {
-		return errors.New("Missing parameters: Property ID")
+		errList = append(errList, "Property ID")
 	}
 	if a.ProfileID == "" {
-		return errors.New("Missing parameters: View ID")
+		errList = append(errList, "View ID")
 	}
 	if a.StartDate == "" {
-		return errors.New("Missing parameters: Start Date")
+		errList = append(errList, "Start Date")
 	}
 	if a.EndDate == "" {
-		return errors.New("Missing parameters: End Date")
+		errList = append(errList, "End Date")
 	}
 	if a.mgmtClient == nil {
-		return errors.New("Management Data Extractor not defined")
+		errList = append(errList, "GA Management Client")
 	}
 	if a.mgmtClient == nil {
-		return errors.New("Google Analytics Data Extractor not defined")
+		errList = append(errList, "GA Data Client")
+	}
+	if len(errList) > 0 {
+		errText := "Missing Fields: "
+		numMissingFields := len(errList)
+		for idx, missingField := range errList {
+			if idx < (numMissingFields - 1) {
+				errText = errText + missingField + ", "
+			} else {
+				errText = errText + missingField
+			}
+		}
+		return errors.New(errText)
 	}
 	return nil
 }
