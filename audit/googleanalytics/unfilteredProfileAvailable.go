@@ -35,7 +35,7 @@ type UnfilteredProfileAvailable struct {
 //
 // To make it flexible, we would need to only expose the Do function. But internally the functionality
 // would utilize interfaces to switch between the tests and
-func (a *UnfilteredProfileAvailable) Do(mgmtExtractor DataExtractor, dataExtractor DataExtractor) error {
+func (a *UnfilteredProfileAvailable) Do(mgmtExtractor GaMgmtExtractor, dataExtractor GaDataExtractor) error {
 	a.Result = UnfilteredProfileAvailableResult{
 		ProfileCount:               len(a.Data.Profiles),
 		UnfilteredProfileAvailable: false}
