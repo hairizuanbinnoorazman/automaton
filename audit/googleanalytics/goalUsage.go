@@ -31,7 +31,10 @@ type GoalUsage struct {
 // Do method runs the analysis on the dataset to determine the status of the Goal Usage in the profile
 func (a *GoalUsage) Do(mgmtExtractor GaMgmtExtractor, dataExtractor GaDataExtractor) error {
 	// Validate input data
-	a.Data.validate()
+	err := a.Data.validate()
+	if err != nil {
+		return err
+	}
 
 	// Extract the GA Management Data
 	mgmtData, err := mgmtExtractor.Extract(a.Data.auditDetails.mgmtClient, a.Data.auditDetails.AccountID, a.Data.auditDetails.PropertyID,
