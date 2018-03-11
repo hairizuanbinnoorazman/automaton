@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"testing"
-	"time"
 
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics"
 	"gitlab.com/hairizuanbinnoorazman/automaton/helper"
@@ -14,7 +13,6 @@ import (
 
 type TestGaMgmtExtractorInput struct {
 	Name   string
-	Input  googleanalytics.GaMgmtParams
 	Output googleanalytics.GaMgmtProperties
 }
 
@@ -34,34 +32,32 @@ func TestGaMgmtExtractor(t *testing.T) {
 }
 
 type TestGaDataExtractorInput struct {
-	Name  string
-	Input googleanalytics.GaDataParams
+	Name      string
+	InputData map[string][]*analyticsreporting.ReportRequest
 }
 
 func TestGaDataExtractor(t *testing.T) {
 	testData := []TestGaDataExtractorInput{
 		TestGaDataExtractorInput{
 			Name: "Initial Case",
-			Input: googleanalytics.GaDataParams{
-				ReportRequest: map[string][]*analyticsreporting.ReportRequest{
-					"test": []*analyticsreporting.ReportRequest{
-						&analyticsreporting.ReportRequest{
-							DateRanges: []*analyticsreporting.DateRange{
-								&analyticsreporting.DateRange{
-									StartDate: time.Now().AddDate(0, 0, -14).Format("2006-01-02"),
-									EndDate:   time.Now().Format("2006-01-02"),
-								},
+			InputData: map[string][]*analyticsreporting.ReportRequest{
+				"Initial Case": []*analyticsreporting.ReportRequest{
+					&analyticsreporting.ReportRequest{
+						DateRanges: []*analyticsreporting.DateRange{
+							&analyticsreporting.DateRange{
+								StartDate: "2018-01-01",
+								EndDate:   "2018-01-07",
 							},
-							ViewId: "",
-							Dimensions: []*analyticsreporting.Dimension{
-								&analyticsreporting.Dimension{
-									Name: "ga:source",
-								},
+						},
+						ViewId: "",
+						Dimensions: []*analyticsreporting.Dimension{
+							&analyticsreporting.Dimension{
+								Name: "ga:source",
 							},
-							Metrics: []*analyticsreporting.Metric{
-								&analyticsreporting.Metric{
-									Expression: "ga:users",
-								},
+						},
+						Metrics: []*analyticsreporting.Metric{
+							&analyticsreporting.Metric{
+								Expression: "ga:users",
 							},
 						},
 					},
@@ -82,11 +78,17 @@ func TestGaDataExtractor(t *testing.T) {
 		client := helper.GoogleAnalyticsReportingAuth(cred)
 
 		// Prep the data extraction
-		extractor := googleanalytics.GaDataExtractor{}
-		extractor.Params = googleanalytics.GaDataParams{ReportRequest: testCase.Input.ReportRequest}
-		extractor.Extract(client)
+		extractor := googleanalytics.GaDataExtract{}
+		output, err := extractor.Extract(client, testCase.InputData)
 
 		// Test the data structures within it
 		// Undergoing required changes
+
+		// Check for the following
+		// Now only defined very loosely
+		if len(output[testCase.Name][0].Reports[0].Data.Rows) <= 0 {
+			t.Errorf("Error in data extraction. No data is extracted for the following parameters")
+		}
+
 	}
 }
