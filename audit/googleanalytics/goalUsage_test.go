@@ -32,7 +32,6 @@ func TestGoalUsage(t *testing.T) {
 	for _, singleTest := range testLists {
 		newGoalUsage := googleanalytics.NewGoalUsage()
 		newGoalUsage.Data = singleTest.InputData
-		newGoalUsage.RunAudit()
 		equalityTest := reflect.DeepEqual(newGoalUsage.Result, singleTest.ExpectedOutput)
 		if equalityTest == false {
 			expectedValue, _ := json.MarshalIndent(singleTest.ExpectedOutput, "", "\t")
