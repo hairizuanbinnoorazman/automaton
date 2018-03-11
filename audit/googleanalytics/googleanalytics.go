@@ -31,6 +31,41 @@ type metadata struct {
 	DataExtractors dataExtractors
 }
 
+type auditDetails struct {
+	AccountID  string
+	PropertyID string
+	ProfileID  string
+	StartDate  string
+	EndDate    string
+	mgmtClient *http.Client
+	dataClient *http.Client
+}
+
+func (a *auditDetails) validate() error {
+	if a.AccountID == "" {
+		return errors.New("Missing parameters: Account ID")
+	}
+	if a.PropertyID == "" {
+		return errors.New("Missing parameters: Property ID")
+	}
+	if a.ProfileID == "" {
+		return errors.New("Missing parameters: View ID")
+	}
+	if a.StartDate == "" {
+		return errors.New("Missing parameters: Start Date")
+	}
+	if a.EndDate == "" {
+		return errors.New("Missing parameters: End Date")
+	}
+	if a.mgmtClient == nil {
+		return errors.New("Management Data Extractor not defined")
+	}
+	if a.mgmtClient == nil {
+		return errors.New("Google Analytics Data Extractor not defined")
+	}
+	return nil
+}
+
 type dataExtractors struct {
 	GaMgmtProperties []string
 	GaDataProperties map[string][]*analyticsreporting.ReportRequest
