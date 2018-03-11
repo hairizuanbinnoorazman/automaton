@@ -1,4 +1,5 @@
 // +build extractors
+
 package googleanalytics_test
 
 import (
