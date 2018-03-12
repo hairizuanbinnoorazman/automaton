@@ -63,6 +63,10 @@ func (e *GaMgmtExtract) Extract(client *http.Client, accountID string,
 	return mgmtProperty, nil
 }
 
+func NewGaMgmtExtract() *GaMgmtExtract {
+	return &GaMgmtExtract{}
+}
+
 // GaDataExtractor interface is an interface which requires a struct to use a slightly altered version of the
 // data extractor interface.
 type GaDataExtractor interface {
@@ -104,4 +108,8 @@ func (e *GaDataExtract) Extract(client *http.Client,
 		results[name] = append(results[name], response)
 	}
 	return results, nil
+}
+
+func NewGaDataExtract() *GaDataExtract {
+	return &GaDataExtract{}
 }
