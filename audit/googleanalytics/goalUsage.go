@@ -2,6 +2,7 @@ package googleanalytics
 
 import (
 	"fmt"
+	"net/http"
 
 	analytics "google.golang.org/api/analytics/v3"
 	analyticsreporting "google.golang.org/api/analyticsreporting/v4"
@@ -98,7 +99,7 @@ func (a *GoalUsage) Do(mgmtExtractor GaMgmtExtractor, dataExtractor GaDataExtrac
 	return nil
 }
 
-// NewGoalUsage is a convenience function to create a new GoalUsage struct with predefined properties such as Name, Description etc
+// NewGoalUsage function instantiates the goal with a an almost empty new goal usage struct
 func NewGoalUsage() GoalUsage {
 	newGoalUsage := GoalUsage{
 		Metadata: metadata{
@@ -109,5 +110,20 @@ func NewGoalUsage() GoalUsage {
 			},
 		},
 	}
+	return newGoalUsage
+}
+
+func NewGoalUsageWithParams(accountID, propertyID, profileID, startDate, endDate string, mgmtClient, dataClient *http.Client) GoalUsage {
+	newGoalUsage := NewGoalUsage()
+	newAuditDetails := auditDetails{
+		AccountID:  accountID,
+		PropertyID: propertyID,
+		ProfileID:  profileID,
+		StartDate:  startDate,
+		EndDate:    endDate,
+		mgmtClient: mgmtClient,
+		dataClient: dataClient,
+	}
+	newGoalUsage.Data.auditDetails = newAuditDetails
 	return newGoalUsage
 }
