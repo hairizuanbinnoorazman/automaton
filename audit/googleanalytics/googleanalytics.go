@@ -12,7 +12,6 @@ import (
 	"path"
 	"text/template"
 
-	"gitlab.com/hairizuanbinnoorazman/automaton/audit"
 	analytics "google.golang.org/api/analytics/v3"
 	analyticsreporting "google.golang.org/api/analyticsreporting/v4"
 )
@@ -24,6 +23,11 @@ const goals = "goals"
 const profileFilterLinks = "profileFilterLinks"
 const customdimensions = "customDimensions"
 const custommetrics = "customMetrics"
+
+type Audit struct {
+	UnfilteredProfileAvailable *UnfilteredProfileAvailable `json:"unfiltered_profile_available,omitempty"`
+	GoalUsage                  *GoalUsage                  `json:"goal_usage,omitempty"`
+}
 
 type metadata struct {
 	Name           string
@@ -171,13 +175,17 @@ func extractGAMgmtData(client *http.Client, mgmtProperties []string, accountID, 
 
 // RenderOutput function will be moved from this package to the cmd package.
 // Current render output here will be depreciated; rendering should not be done on the domain level
-func RenderOutput(w io.Writer, templateFile string, a audit.Auditor) error {
+func RenderOutput(w io.Writer, templateFile string, a interface{}) error {
 	_, templateFileValue := path.Split(templateFile)
 	t := template.Must(template.New(templateFileValue).ParseFiles(templateFile))
 
 	var err error
 
 	switch tempStruct := a.(type) {
+	case *GoalUsage:
+		err = t.Execute(w, tempStruct)
+	case *UnfilteredProfileAvailable:
+		err = t.Execute(w, tempStruct)
 	case *CustomDimMetricUsage:
 		err = t.Execute(w, tempStruct)
 	default:
@@ -195,37 +203,16 @@ func RenderOutput(w io.Writer, templateFile string, a audit.Auditor) error {
 	return nil
 }
 
-func RunAudit(w io.Writer, client *http.Client, config Config) error {
-	var auditItemNames []string
-	for _, x := range config.AuditItems {
-		auditItemNames = append(auditItemNames, x.Name)
-	}
-	prep, err := prepDataExtraction(auditItemNames)
-	if err != nil {
-		return err
-	}
-	mgmtData, err := extractGAMgmtData(client, prep.GaMgmtProperties, config.AccountID, config.PropertyID, config.ProfileID)
-	if err != nil {
-		return err
-	}
-
-	for _, item := range config.AuditItems {
-		// Prep for depreciation
-		//
-		// if item.Name == NewGoalUsage().Metadata.Name {
-		// 	temp := NewGoalUsage()
-		// 	temp.Data = GoalUsageData{Goals: mgmtData.Goals}
-		// 	temp.RunAudit()
-		// 	err = RenderOutput(w, item.TemplateFile, &temp)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// }
-		if item.Name == NewCustomDimMetricUsage().Metadata.Name {
-			temp := NewCustomDimMetricUsage()
-			temp.Data = CustomDimMetricUsageData{CustomDimensions: mgmtData.CustomDimensions, CustomMetrics: mgmtData.CustomMetrics}
-			temp.RunAudit()
-			err = RenderOutput(w, item.TemplateFile, &temp)
+func RenderAllOutput(w io.Writer, config Config, auditOutput Audit) error {
+	for _, auditItem := range config.AuditItems {
+		if auditItem.Name == NewUnfilteredProfileAvailable().Metadata.Name {
+			err := RenderOutput(w, auditItem.TemplateFile, auditOutput.UnfilteredProfileAvailable)
+			if err != nil {
+				return err
+			}
+		}
+		if auditItem.Name == NewGoalUsage().Metadata.Name {
+			err := RenderOutput(w, auditItem.TemplateFile, auditOutput.GoalUsage)
 			if err != nil {
 				return err
 			}
@@ -233,4 +220,40 @@ func RunAudit(w io.Writer, client *http.Client, config Config) error {
 	}
 
 	return nil
+}
+
+func RunAudit(mgmtClient, dataClient *http.Client, config Config) (Audit, error) {
+	var auditItemNames []string
+	for _, x := range config.AuditItems {
+		auditItemNames = append(auditItemNames, x.Name)
+	}
+
+	newAudit := Audit{}
+
+	gaMgmtExtractor := NewGaMgmtExtract()
+	gaDataExtractor := NewGaDataExtract()
+
+	for _, item := range config.AuditItems {
+		if item.Name == NewUnfilteredProfileAvailable().Metadata.Name {
+			temp := NewUnfilteredProfileAvailableWithParams(
+				config.AccountID, config.PropertyID, config.ProfileID, mgmtClient)
+			err := temp.Do(gaMgmtExtractor)
+			if err != nil {
+				return Audit{}, err
+			}
+			newAudit.UnfilteredProfileAvailable = &temp
+		}
+		if item.Name == NewGoalUsage().Metadata.Name {
+			temp := NewGoalUsageWithParams(
+				config.AccountID, config.PropertyID, config.ProfileID,
+				config.StartDate, config.EndDate, mgmtClient, dataClient)
+			err := temp.Do(gaMgmtExtractor, gaDataExtractor)
+			if err != nil {
+				return Audit{}, err
+			}
+			newAudit.GoalUsage = &temp
+		}
+	}
+
+	return newAudit, nil
 }
