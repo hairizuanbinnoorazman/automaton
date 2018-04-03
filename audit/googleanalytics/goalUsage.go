@@ -113,6 +113,7 @@ func NewGoalUsage() GoalUsage {
 	return newGoalUsage
 }
 
+// NewGoalUsageWithParams function instantiates the goal audit with all required parameters
 func NewGoalUsageWithParams(accountID, propertyID, profileID, startDate, endDate string, mgmtClient, dataClient *http.Client) GoalUsage {
 	newGoalUsage := NewGoalUsage()
 	newAuditDetails := auditDetails{
