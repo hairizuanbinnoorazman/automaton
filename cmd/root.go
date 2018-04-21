@@ -12,6 +12,7 @@ var (
 	credFile   string
 	tool       string
 	outputFile string
+	outputType string
 
 	rootCmd = &cobra.Command{
 		Use:   "automaton",

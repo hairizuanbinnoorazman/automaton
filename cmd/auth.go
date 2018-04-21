@@ -15,10 +15,4 @@ func googleAnalyticsAuth(cred []byte) *http.Client {
 	return client
 }
 
-// GoogleAnalyticsReportingAuth is a helper function that help out in authentication for analytics reporting service
-func GoogleAnalyticsReportingAuth(cred []byte) *http.Client {
-	authConfig, _ := google.JWTConfigFromJSON(cred, "https://www.googleapis.com/auth/analytics")
-	emptyContext := context.Background()
-	client := authConfig.Client(emptyContext)
-	return client
-}
+
