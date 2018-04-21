@@ -14,7 +14,7 @@ This spec describes the list of Google Analytics Audits we would conduct when au
     - Are the custom metrics being used? 
         - Indicated by data collected based on it
 - Goals
-    - Are there goals set
+    - Are there goals set?
     - Are the goals being used? 
         - Indicated by data collected based on it
     - Are there duplicate goals being set?
@@ -23,5 +23,22 @@ This spec describes the list of Google Analytics Audits we would conduct when au
     - Allow display of Age/Gender demographic reports
         - Check the age, gender, demographic reports if there is any data there
 - Traffic Sources
-    - Is the source, medium, campaign inconsistent?
+    - Is the source, medium, campaign, channel inconsistent?
         - Indicated by collecting data and checking that all are small caps
+        - Check for space inconsistencies
+    - Is there any self referral issues?
+        - Indicated by traffic coming from own website/domain
+- Site searches
+    - Does the website has site search and does it utilize this feature?
+        - Check whether value is set
+        - Check whether there is site metrics being stored in the first place
+- Events
+    - Does the website use events tracking?
+    - Does the event tracking on the website have consistent caps?
+        - Event Category
+        - Event Action
+        - Event Label
+    - Does any of the event stuff collect PII?
+- User permissions
+    - Who has user permissions to the tool?
+    - Do any of them come from personal email?
