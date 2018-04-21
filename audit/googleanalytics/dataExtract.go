@@ -63,6 +63,10 @@ func (e *GaMgmtExtract) Extract(client *http.Client, accountID string,
 	return mgmtProperty, nil
 }
 
+// NewGaMgmtExtract returns a pointer to the data extract struct.
+// The pointer to the struct is to be given rather than a non-pointer version as
+// it is impossible for Interfaces to define pointer functions
+// We need to return pointers to struct which implement said functions
 func NewGaMgmtExtract() *GaMgmtExtract {
 	return &GaMgmtExtract{}
 }
@@ -110,6 +114,10 @@ func (e *GaDataExtract) Extract(client *http.Client,
 	return results, nil
 }
 
+// NewGaDataExtract returns a pointer to the data extract struct.
+// The pointer to the struct is to be given rather than a non-pointer version as
+// it is impossible for Interfaces to define pointer functions
+// We need to return pointers to struct which implement said functions
 func NewGaDataExtract() *GaDataExtract {
 	return &GaDataExtract{}
 }
