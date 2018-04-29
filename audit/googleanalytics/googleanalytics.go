@@ -108,38 +108,6 @@ func getGADataService(client *http.Client) *analyticsreporting.Service {
 	return analyticsDataService
 }
 
-func resolveExtractors(overallDataExtractor, singleDataExtractor dataExtractors) dataExtractors {
-	// Resolve properties for managment properties
-	for _, singleVal := range singleDataExtractor.GaMgmtProperties {
-		found := false
-		for _, overallVal := range overallDataExtractor.GaMgmtProperties {
-			if singleVal == overallVal {
-				found = true
-				break
-			}
-		}
-		if found == false {
-			overallDataExtractor.GaMgmtProperties = append(overallDataExtractor.GaMgmtProperties, singleVal)
-		}
-	}
-
-	// Resolve properties for data extractors
-	// Not handled properly yet, as no use case available yet. However, a future expected use case would be available soon
-	// A few things to handled -> Like how to map the data accordingly to the audit that requested it
-	return overallDataExtractor
-}
-
-func prepDataExtraction(auditItems []string) (dataExtractors, error) {
-	var newDataExtractor dataExtractors
-	for _, item := range auditItems {
-		if item == NewUnfilteredProfileAvailable().Metadata.Name {
-			temp := NewUnfilteredProfileAvailable()
-			newDataExtractor = resolveExtractors(newDataExtractor, temp.Metadata.DataExtractors)
-		}
-	}
-	return newDataExtractor, nil
-}
-
 func extractGAMgmtData(client *http.Client, mgmtProperties []string, accountID, propertyID, profileID string) (GaMgmtProperties, error) {
 	var newGaMgmtProperties GaMgmtProperties
 	mgmtService := getManagementService(client)
@@ -185,8 +153,6 @@ func RenderOutput(w io.Writer, templateFile string, a interface{}) error {
 	case *GoalUsage:
 		err = t.Execute(w, tempStruct)
 	case *UnfilteredProfileAvailable:
-		err = t.Execute(w, tempStruct)
-	case *CustomDimMetricUsage:
 		err = t.Execute(w, tempStruct)
 	default:
 		err := errors.New("Unable to find the type definition of the audit")
