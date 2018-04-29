@@ -2,6 +2,16 @@
 
 This spec describes the list of Google Analytics Audits we would conduct when auditing Google Analytics
 
+# Command preview
+
+```
+# Initializes configuration file
+automaton audit init
+
+# Run the audit based on a config
+automaton audit run
+```
+
 # Details
 
 - Profile
