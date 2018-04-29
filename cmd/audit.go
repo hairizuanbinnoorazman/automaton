@@ -73,9 +73,27 @@ var (
 					fmt.Println(fmt.Sprintf("Error in getting the json config. %v", err.Error()))
 					return
 				}
-				client := googleAnalyticsAuth(credFile)
-				googleanalytics.RunAudit(bufferedFile, client, config)
-				bufferedFile.Flush()
+				mgmtClient := googleAnalyticsAuth(credFile)
+				dataClient := GoogleAnalyticsReportingAuth(credFile)
+				output, err := googleanalytics.RunAudit(mgmtClient, dataClient, config)
+				if err != nil {
+					fmt.Printf("Error in running the analysis. Refer to the following issue: %v", err.Error())
+					return
+				}
+				if outputType == "json" {
+					outputJSON, err := json.MarshalIndent(output, "", "\t")
+					if err != nil {
+						fmt.Printf("Error in printing the analysis as JSON. This may be a hint to the issue: %v", err.Error())
+					}
+					fmt.Println(string(outputJSON))
+					return
+				} else if outputType == "markdown" {
+					err := googleanalytics.RenderAllOutput(bufferedFile, config, output)
+					if err != nil {
+						fmt.Printf("Error in printing markdown report. %v", err.Error())
+					}
+					bufferedFile.Flush()
+				}
 			} else if tool == "gtm" {
 				fmt.Println("Not yet implemented")
 			} else {
@@ -93,5 +111,6 @@ func getAuditCmd() {
 	auditRunAuditCmd.Flags().StringVar(&tool, "tool", "ga", "Set the tool to be used for audit. The following would be available for use: ga, gtm")
 	auditRunAuditCmd.Flags().StringVar(&cfgFile, "config", "config.json", "Set the config file to be used to run the audit")
 	auditRunAuditCmd.Flags().StringVar(&credFile, "cred", "cred.json", "Set the cred file to be used to run the audit")
-	auditRunAuditCmd.Flags().StringVar(&outputFile, "output", "audit.md", "Set the output file name")
+	auditRunAuditCmd.Flags().StringVar(&outputFile, "file", "output.md", "Output of the markdown file if requested. Only works on markdown option")
+	auditRunAuditCmd.Flags().StringVar(&outputType, "output", "json", "Set the type of output. Accepts json or markdown")
 }
