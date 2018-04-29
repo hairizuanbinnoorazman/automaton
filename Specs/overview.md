@@ -25,4 +25,6 @@ Ideally, the functionality should be able to allow you to set the initial recomm
 However, it should also be able to generate a config file based on the same type of audit result.  
 
 - Generate config
+- Apply a set of configurations to the tools
 - Apply a single config onto the marketing tool
+- Analyze from a previous set of google analytics audit and generate a config -> How to flag which value to be altered?
