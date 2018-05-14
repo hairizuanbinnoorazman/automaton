@@ -4,10 +4,10 @@ import analytics "google.golang.org/api/analytics/v3"
 
 type goalsAuditor struct {
 	Goals    []*analytics.Goal
-	GoalList []customGoalItem
+	GoalList []GoalItem
 }
 
-type customGoalItem struct {
+type GoalItem struct {
 	Date       string
 	GoalID     string
 	GoalStarts int
