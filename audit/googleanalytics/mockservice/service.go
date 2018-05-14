@@ -6,7 +6,7 @@ import (
 )
 
 type MockService struct {
-	ProfilesSettings          []*analytics.Profiles
+	ProfilesSettings          []*analytics.Profile
 	ProfileFilterLinkSettings []*analytics.ProfileFilterLink
 	GoalSettings              []*analytics.Goal
 	CustomDimSettings         []*analytics.CustomDimension
@@ -15,4 +15,6 @@ type MockService struct {
 	GoalValues         []models.GoalItem
 	CustomDimValues    []models.CustomDimensionItem
 	CustomMetricValues []models.CustomMetricsItem
+
+	Error error
 }
