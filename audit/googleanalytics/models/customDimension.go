@@ -1,13 +1,13 @@
-package googleanalytics
+package models
 
 import analytics "google.golang.org/api/analytics/v3"
 
 type customDimensionAuditor struct {
 	CustomDimensions    []*analytics.CustomDimension
-	CustomDimensionList []customDimensionItem
+	CustomDimensionList []CustomDimensionItem
 }
 
-type customDimensionItem struct {
+type CustomDimensionItem struct {
 	Date           string
 	DimensionID    string
 	DimensionValue string

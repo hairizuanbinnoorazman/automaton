@@ -1,4 +1,4 @@
-package googleanalytics
+package models
 
 type eventsAuditor struct {
 	events []eventItem

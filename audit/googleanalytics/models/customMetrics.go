@@ -1,13 +1,13 @@
-package googleanalytics
+package models
 
 import analytics "google.golang.org/api/analytics/v3"
 
 type customMetricsAuditor struct {
 	CustomMetrics     []*analytics.CustomMetrics
-	CustomMetricsList []customMetricsItem
+	CustomMetricsList []CustomMetricsItem
 }
 
-type customMetricsItem struct {
+type CustomMetricsItem struct {
 	Date              string
 	CustomMetricID    string
 	CustomMetricValue string

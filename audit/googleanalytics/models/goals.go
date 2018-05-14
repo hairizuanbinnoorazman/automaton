@@ -1,4 +1,4 @@
-package googleanalytics
+package models
 
 import analytics "google.golang.org/api/analytics/v3"
 
