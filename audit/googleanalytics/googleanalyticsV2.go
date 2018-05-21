@@ -21,6 +21,7 @@ type GoalAuditor struct {
 	AccountID  string
 	PropertyID string
 	ProfileID  string
+	Name       string
 }
 
 func (g GoalAuditor) Run(e Extractor) models.GoalsAuditResults {
@@ -28,4 +29,8 @@ func (g GoalAuditor) Run(e Extractor) models.GoalsAuditResults {
 	goalData.GoalList, _ = e.GetGoalValues(g.ProfileID)
 	goalData.Goals, _ = e.GetGoalSettings(g.AccountID, g.PropertyID, g.ProfileID)
 	return goalData.RunAudit()
+}
+
+func NewGoalAuditor() GoalAuditor {
+	return GoalAuditor{Name: "GoalAudit"}
 }
