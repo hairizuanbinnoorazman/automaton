@@ -24,5 +24,10 @@ func (s Service) GetProfileSettings(accountID, propertyID, profileID string) ([]
 }
 
 func (s Service) GetProfileLinkSettings(accountID, propertyID, profileID string) ([]*analytics.ProfileFilterLink, error) {
-	return nil, nil
+	mgmtService := s.getManagementService()
+	profileFilterLinkData, err := mgmtService.ProfileFilterLinks.List(accountID, propertyID, profileID).Do()
+	if err != nil {
+		return []*analytics.ProfileFilterLink{}, err
+	}
+	return profileFilterLinkData.Items, nil
 }
