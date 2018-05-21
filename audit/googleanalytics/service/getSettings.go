@@ -3,11 +3,21 @@ package service
 import analytics "google.golang.org/api/analytics/v3"
 
 func (s Service) GetCustomDimSettings(accountID, propertyID, profileID string) ([]*analytics.CustomDimension, error) {
-	return nil, nil
+	mgmtService := s.getManagementService()
+	CustomDimensionData, err := mgmtService.CustomDimensions.List(accountID, propertyID).Do()
+	if err != nil {
+		return []*analytics.CustomDimension{}, err
+	}
+	return CustomDimensionData.Items, nil
 }
 
 func (s Service) GetCustomMetricSettings(accountID, propertyID, profileID string) ([]*analytics.CustomMetric, error) {
-	return nil, nil
+	mgmtService := s.getManagementService()
+	customMetricData, err := mgmtService.CustomMetrics.List(accountID, propertyID).Do()
+	if err != nil {
+		return []*analytics.CustomMetric{}, err
+	}
+	return customMetricData.Items, nil
 }
 
 func (s Service) GetGoalSettings(accountID, propertyID, profileID string) ([]*analytics.Goal, error) {
