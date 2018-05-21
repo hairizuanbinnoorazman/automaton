@@ -97,47 +97,8 @@ type GaMgmtProperties struct {
 	CustomMetrics      []*analytics.CustomMetric
 }
 
-func getManagementService(client *http.Client) *analytics.ManagementService {
-	analyticsService, _ := analytics.New(client)
-	managementService := analytics.NewManagementService(analyticsService)
-	return managementService
-}
-
-func getGADataService(client *http.Client) *analyticsreporting.Service {
-	analyticsDataService, _ := analyticsreporting.New(client)
-	return analyticsDataService
-}
-
 func extractGAMgmtData(client *http.Client, mgmtProperties []string, accountID, propertyID, profileID string) (GaMgmtProperties, error) {
 	var newGaMgmtProperties GaMgmtProperties
-	mgmtService := getManagementService(client)
-
-	for _, item := range mgmtProperties {
-		if item == profiles {
-			profileData, err := mgmtService.Profiles.List(accountID, propertyID).Do()
-			if err != nil {
-				var temp GaMgmtProperties
-				return temp, err
-			}
-			newGaMgmtProperties.Profiles = profileData.Items
-		}
-		if item == goals {
-			goalData, err := mgmtService.Goals.List(accountID, propertyID, profileID).Do()
-			if err != nil {
-				var temp GaMgmtProperties
-				return temp, err
-			}
-			newGaMgmtProperties.Goals = goalData.Items
-		}
-		if item == profileFilterLinks {
-			profileFilterLinksData, err := mgmtService.ProfileFilterLinks.List(accountID, propertyID, profileID).Do()
-			if err != nil {
-				var temp GaMgmtProperties
-				return temp, err
-			}
-			newGaMgmtProperties.ProfileFilterLinks = profileFilterLinksData.Items
-		}
-	}
 	return newGaMgmtProperties, nil
 }
 

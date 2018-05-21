@@ -1,8 +1,6 @@
 package googleanalytics
 
 import (
-	"errors"
-	"fmt"
 	"net/http"
 
 	analyticsreporting "google.golang.org/api/analyticsreporting/v4"
@@ -31,35 +29,8 @@ type GaMgmtExtract struct{}
 func (e *GaMgmtExtract) Extract(client *http.Client, accountID string,
 	propertyID string, profileID string, mgmtItems []string) (GaMgmtProperties, error) {
 
-	// Define Management Data Extraction Service
-	mgmtService := getManagementService(client)
-
 	// Define struct to store all data
 	mgmtProperty := GaMgmtProperties{}
-
-	for _, item := range mgmtItems {
-		if item == profiles {
-			profileData, err := mgmtService.Profiles.List(accountID, propertyID).Do()
-			if err != nil {
-				return GaMgmtProperties{}, err
-			}
-			mgmtProperty.Profiles = profileData.Items
-		}
-		if item == goals {
-			goalData, err := mgmtService.Goals.List(accountID, propertyID, profileID).Do()
-			if err != nil {
-				return GaMgmtProperties{}, err
-			}
-			mgmtProperty.Goals = goalData.Items
-		}
-		if item == profileFilterLinks {
-			profileFilterLinksData, err := mgmtService.ProfileFilterLinks.List(accountID, propertyID, profileID).Do()
-			if err != nil {
-				return GaMgmtProperties{}, err
-			}
-			mgmtProperty.ProfileFilterLinks = profileFilterLinksData.Items
-		}
-	}
 	return mgmtProperty, nil
 }
 
@@ -92,25 +63,6 @@ func (e *GaDataExtract) Extract(client *http.Client,
 	// Initialize the results map
 	results := make(map[string][]*analyticsreporting.GetReportsResponse)
 
-	// Initialize data service
-	dataService := getGADataService(client)
-
-	// Iterate through report request and store the data accordingly
-	for name, req := range reportRequest {
-		reportReq := analyticsreporting.GetReportsRequest{
-			ReportRequests: []*analyticsreporting.ReportRequest{req[0]},
-		}
-		response, err := dataService.Reports.BatchGet(&reportReq).Do()
-		if err != nil {
-			fmt.Println(err.Error())
-			return nil, err
-		}
-		if response.HTTPStatusCode != 200 {
-			return nil, errors.New("Unable to get values")
-		}
-
-		results[name] = append(results[name], response)
-	}
 	return results, nil
 }
 
