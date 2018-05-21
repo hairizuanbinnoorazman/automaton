@@ -2,7 +2,6 @@ package googleanalytics
 
 import (
 	"fmt"
-	"net/http"
 
 	analytics "google.golang.org/api/analytics/v3"
 	analyticsreporting "google.golang.org/api/analyticsreporting/v4"
@@ -106,19 +105,4 @@ func NewCustomDimUsage() CustomDimUsage {
 		},
 	}
 	return newGoalUsage
-}
-
-func NewCustomDimUsageWithParams(accountID, propertyID, profileID, startDate, endDate string, mgmtClient, dataClient *http.Client) CustomDimMetricUsage {
-	newCustomDimUsage := NewCustomDimUsage()
-	newAuditDetails := auditDetails{
-		AccountID:  accountID,
-		PropertyID: propertyID,
-		ProfileID:  profileID,
-		StartDate:  startDate,
-		EndDate:    endDate,
-		mgmtClient: mgmtClient,
-		dataClient: dataClient,
-	}
-	newCustomDimUsage.Data.auditDetails = newAuditDetails
-	return newCustomDimUsage
 }
