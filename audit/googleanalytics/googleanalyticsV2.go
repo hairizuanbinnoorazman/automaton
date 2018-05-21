@@ -16,3 +16,16 @@ type Extractor interface {
 	GetCustomMetricValues(profileID string) ([]models.CustomMetricsItem, error)
 	GetGoalValues(profileID string) ([]models.GoalItem, error)
 }
+
+type GoalAuditor struct {
+	AccountID  string
+	PropertyID string
+	ProfileID  string
+}
+
+func (g GoalAuditor) Run(e Extractor) models.GoalsAuditResults {
+	goalData := models.GoalsData{}
+	goalData.GoalList, _ = e.GetGoalValues(g.ProfileID)
+	goalData.Goals, _ = e.GetGoalSettings(g.AccountID, g.PropertyID, g.ProfileID)
+	return goalData.RunAudit()
+}

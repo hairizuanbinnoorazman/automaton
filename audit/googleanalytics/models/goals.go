@@ -2,7 +2,7 @@ package models
 
 import analytics "google.golang.org/api/analytics/v3"
 
-type goalsAuditor struct {
+type GoalsData struct {
 	Goals    []*analytics.Goal
 	GoalList []GoalItem
 }
@@ -13,16 +13,25 @@ type GoalItem struct {
 	GoalStarts int
 }
 
-func (g goalsAuditor) HasMoreThan0() bool {
+type GoalsAuditResults struct {
+	HasMoreThan0 bool
+	UsedGoals    bool
+}
+
+func (g GoalsData) HasMoreThan0() bool {
 	if len(g.Goals) > 0 {
 		return true
 	}
 	return false
 }
 
-func (g goalsAuditor) UsedGoals() bool {
+func (g GoalsData) UsedGoals() bool {
 	if len(g.GoalList) > 0 {
 		return true
 	}
 	return false
+}
+
+func (g GoalsData) RunAudit() GoalsAuditResults {
+	return GoalsAuditResults{}
 }
