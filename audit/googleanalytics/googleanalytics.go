@@ -133,16 +133,10 @@ func RenderOutput(w io.Writer, templateFile string, a interface{}) error {
 func RenderAllOutput(w io.Writer, config Config, auditOutput Audit) error {
 	for _, auditItem := range config.AuditItems {
 		if auditItem.Name == NewUnfilteredProfileAvailable().Metadata.Name {
-			err := RenderOutput(w, auditItem.TemplateFile, auditOutput.UnfilteredProfileAvailable)
-			if err != nil {
-				return err
-			}
+			// err := RenderOutput(w, auditItem.TemplateFile, auditOutput.UnfilteredProfileAvailable)
 		}
 		if auditItem.Name == NewGoalUsage().Metadata.Name {
-			err := RenderOutput(w, auditItem.TemplateFile, auditOutput.GoalUsage)
-			if err != nil {
-				return err
-			}
+			// err := RenderOutput(w, auditItem.TemplateFile, auditOutput.GoalUsage)
 		}
 	}
 
