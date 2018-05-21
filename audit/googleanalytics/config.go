@@ -1,8 +1,6 @@
 package googleanalytics
 
 import (
-	"fmt"
-	"strings"
 	"time"
 )
 
@@ -17,15 +15,7 @@ type Config struct {
 }
 
 type auditItem struct {
-	Name         string `json:"name"`
-	TemplateFile string `json:"template_file"`
-}
-
-func createFileName(auditName string) string {
-	auditName = strings.ToLower(auditName)
-	auditName = strings.Replace(auditName, " ", "_", -1)
-	filename := fmt.Sprintf("./audit/googleanalytics/templates/%v.md", auditName)
-	return filename
+	Name string `json:"name"`
 }
 
 // NewConfig returns a new configuration file that has default values which one can use to modify and append
@@ -40,10 +30,7 @@ func NewConfig() Config {
 
 	// Append the new audit items here - we will utilize the name generated from the default struct
 	var newAuditItems []auditItem
-	newAuditItems = append(newAuditItems, auditItem{Name: NewUnfilteredProfileAvailable().Metadata.Name, TemplateFile: createFileName(NewUnfilteredProfileAvailable().Metadata.Name)})
-	newAuditItems = append(newAuditItems, auditItem{Name: NewGoalUsage().Metadata.Name, TemplateFile: createFileName(NewGoalUsage().Metadata.Name)})
-	newAuditItems = append(newAuditItems, auditItem{Name: NewCustomDimUsage().Metadata.Name, TemplateFile: createFileName(NewCustomDimUsage().Metadata.Name)})
-	newAuditItems = append(newAuditItems, auditItem{Name: NewCustomMetricUsage().Metadata.Name, TemplateFile: createFileName(NewCustomMetricUsage().Metadata.Name)})
+	newAuditItems = append(newAuditItems, auditItem{Name: NewGoalAuditor().Name})
 
 	newConfig.AuditItems = newAuditItems
 	return newConfig
