@@ -6,11 +6,11 @@ import (
 )
 
 type Extractor interface {
-	GetCustomDimSettings(accountID, viewID, profileID string) ([]*analytics.CustomDimension, error)
-	GetCustomMetricSettings(accountID, viewID, profileID string) ([]*analytics.CustomMetric, error)
-	GetGoalSettings(accountID, viewID, profileID string) ([]*analytics.Goal, error)
-	GetProfileSettings(accountID, viewID, profileID string) ([]*analytics.Profile, error)
-	GetProfileLinkSettings(accountID, viewID, profileID string) ([]*analytics.ProfileFilterLink, error)
+	GetCustomDimSettings(accountID, propertyID, profileID string) ([]*analytics.CustomDimension, error)
+	GetCustomMetricSettings(accountID, propertyID, profileID string) ([]*analytics.CustomMetric, error)
+	GetGoalSettings(accountID, propertyID, profileID string) ([]*analytics.Goal, error)
+	GetProfileSettings(accountID, propertyID, profileID string) ([]*analytics.Profile, error)
+	GetProfileLinkSettings(accountID, propertyID, profileID string) ([]*analytics.ProfileFilterLink, error)
 
 	GetCustomDimValues(profileID string) ([]models.CustomDimensionItem, error)
 	GetCustomMetricValues(profileID string) ([]models.CustomMetricsItem, error)
