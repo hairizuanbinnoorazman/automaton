@@ -11,7 +11,12 @@ func (s Service) GetCustomMetricSettings(accountID, propertyID, profileID string
 }
 
 func (s Service) GetGoalSettings(accountID, propertyID, profileID string) ([]*analytics.Goal, error) {
-	return nil, nil
+	mgmtService := s.getManagementService()
+	goalData, err := mgmtService.Goals.List(accountID, propertyID, profileID).Do()
+	if err != nil {
+		return []*analytics.Goal{}, err
+	}
+	return goalData.Items, nil
 }
 
 func (s Service) GetProfileSettings(accountID, propertyID, profileID string) ([]*analytics.Profile, error) {
