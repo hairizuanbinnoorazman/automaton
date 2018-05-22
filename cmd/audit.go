@@ -73,27 +73,8 @@ var (
 					fmt.Println(fmt.Sprintf("Error in getting the json config. %v", err.Error()))
 					return
 				}
-				mgmtClient := googleAnalyticsAuth(credFile)
-				dataClient := GoogleAnalyticsReportingAuth(credFile)
-				output, err := googleanalytics.RunAudit(mgmtClient, dataClient, config)
-				if err != nil {
-					fmt.Printf("Error in running the analysis. Refer to the following issue: %v", err.Error())
-					return
-				}
-				if outputType == "json" {
-					outputJSON, err := json.MarshalIndent(output, "", "\t")
-					if err != nil {
-						fmt.Printf("Error in printing the analysis as JSON. This may be a hint to the issue: %v", err.Error())
-					}
-					fmt.Println(string(outputJSON))
-					return
-				} else if outputType == "markdown" {
-					err := googleanalytics.RenderAllOutput(bufferedFile, config, output)
-					if err != nil {
-						fmt.Printf("Error in printing markdown report. %v", err.Error())
-					}
-					bufferedFile.Flush()
-				}
+				_ = googleAnalyticsAuth(credFile)
+				bufferedFile.Flush()
 			} else if tool == "gtm" {
 				fmt.Println("Not yet implemented")
 			} else {
