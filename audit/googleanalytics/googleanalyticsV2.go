@@ -17,6 +17,22 @@ type Extractor interface {
 	GetGoalValues(profileID string) ([]models.GoalItem, error)
 }
 
+type Auditor struct {
+	AccountID  string
+	PropertyID string
+	ProfileID  string
+}
+
+type AuditorResults struct {
+	GoalAudit *models.GoalsAuditResults
+}
+
+func (a Auditor) Run(e Extractor) AuditorResults {
+	goalAuditor := GoalAuditor{AccountID: a.AccountID, PropertyID: a.PropertyID, ProfileID: a.ProfileID}
+	goalResults := goalAuditor.Run(e)
+	return AuditorResults{GoalAudit: &goalResults}
+}
+
 type GoalAuditor struct {
 	AccountID  string
 	PropertyID string
