@@ -34,10 +34,11 @@ func (a Auditor) Run(e Extractor) AuditorResults {
 }
 
 type GoalAuditor struct {
-	AccountID  string
-	PropertyID string
-	ProfileID  string
-	Name       string
+	AccountID   string
+	PropertyID  string
+	ProfileID   string
+	Name        string
+	Description string
 }
 
 func (g GoalAuditor) Run(e Extractor) models.GoalsAuditResults {
@@ -48,5 +49,5 @@ func (g GoalAuditor) Run(e Extractor) models.GoalsAuditResults {
 }
 
 func NewGoalAuditor() GoalAuditor {
-	return GoalAuditor{Name: "GoalAudit"}
+	return GoalAuditor{Name: "GoalAudit", Description: "Usage of the goals feature to track certain aspects of website metrics that coincide with a conversion on the website."}
 }
