@@ -76,7 +76,7 @@ var (
 				}
 				client := googleAnalyticsAuth(credFile)
 				auditor := googleanalytics.Auditor{}
-				service := service.Service{Client: client}
+				service := service.Extractor{Client: client}
 				results := auditor.Run(service)
 				resultsJSON, err := json.MarshalIndent(results, "", "\t")
 				if err != nil {
