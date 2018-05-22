@@ -5,7 +5,7 @@ import (
 	analytics "google.golang.org/api/analytics/v3"
 )
 
-type MockService struct {
+type MockExtractor struct {
 	ProfilesSettings          []*analytics.Profile
 	ProfileFilterLinkSettings []*analytics.ProfileFilterLink
 	GoalSettings              []*analytics.Goal
