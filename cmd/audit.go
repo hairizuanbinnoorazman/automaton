@@ -9,6 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics"
+	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/service"
 )
 
 var (
@@ -64,7 +65,7 @@ var (
 				fmt.Println("Error in creation of new file to store output")
 				fmt.Println(err.Error())
 			}
-			bufferedFile := bufio.NewWriter(file)
+			_ = bufio.NewWriter(file)
 
 			if tool == "ga" {
 				config := googleanalytics.Config{}
@@ -73,8 +74,18 @@ var (
 					fmt.Println(fmt.Sprintf("Error in getting the json config. %v", err.Error()))
 					return
 				}
-				_ = googleAnalyticsAuth(credFile)
-				bufferedFile.Flush()
+				client := googleAnalyticsAuth(credFile)
+				auditor := googleanalytics.Auditor{}
+				service := service.Service{Client: client}
+				results := auditor.Run(service)
+				resultsJSON, err := json.MarshalIndent(results, "", "\t")
+				if err != nil {
+					fmt.Println(err.Error())
+					return
+				}
+				fmt.Println(string(resultsJSON))
+
+				// bufferedFile.Flush()
 			} else if tool == "gtm" {
 				fmt.Println("Not yet implemented")
 			} else {
