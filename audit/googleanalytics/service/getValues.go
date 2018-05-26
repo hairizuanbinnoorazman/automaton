@@ -58,3 +58,7 @@ func (s Extractor) GetGoalValues(profileID, startDate, endDate, goalID string) (
 
 	return goalItems, nil
 }
+
+func (s Extractor) GetEventValues(profileID, startDate, endDate string) ([]models.EventItem, error) {
+	return []models.EventItem{}, nil
+}

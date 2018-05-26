@@ -15,6 +15,7 @@ type Extractor interface {
 	GetCustomDimValues(profileID, startDate, endDate, customDimID string) ([]models.CustomDimensionItem, error)
 	GetCustomMetricValues(profileID, startDate, endDate, customMetricID string) ([]models.CustomMetricsItem, error)
 	GetGoalValues(profileID, startDate, endDate, goalID string) ([]models.GoalItem, error)
+	GetEventValues(profileID, startDate, endDate string) ([]models.EventItem, error)
 }
 
 type Auditor struct {
@@ -37,13 +38,15 @@ type GoalAuditor struct {
 	AccountID  string
 	PropertyID string
 	ProfileID  string
+	StartDate  string
+	EndDate    string
 }
 
 func (g GoalAuditor) Run(e Extractor) *models.GoalsData {
 	goalData := models.NewGoalsData()
 	goalData.Goals, _ = e.GetGoalSettings(g.AccountID, g.PropertyID, g.ProfileID)
 	for _, goalSetting := range goalData.Goals {
-		values, _ := e.GetGoalValues(g.ProfileID, goalSetting.Id)
+		values, _ := e.GetGoalValues(g.ProfileID, g.StartDate, g.EndDate, goalSetting.Id)
 		goalData.GoalList[goalSetting.Id] = values
 	}
 	goalData.RunAudit()
@@ -54,4 +57,17 @@ type CustomDimAuditor struct {
 	AccountID  string
 	PropertyID string
 	ProfileID  string
+}
+
+type EventAuditor struct {
+	ProfileID string
+	StartDate string
+	EndDate   string
+}
+
+func (a EventAuditor) Run(e Extractor) *models.EventsData {
+	eventsData := models.NewEventsData()
+	eventsData.Events, _ = e.GetEventValues(a.ProfileID, a.StartDate, a.EndDate)
+	eventsData.RunAudit()
+	return &eventsData
 }
