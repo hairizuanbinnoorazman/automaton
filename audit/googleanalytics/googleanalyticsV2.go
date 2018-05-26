@@ -14,7 +14,7 @@ type Extractor interface {
 
 	GetCustomDimValues(profileID string) ([]models.CustomDimensionItem, error)
 	GetCustomMetricValues(profileID string) ([]models.CustomMetricsItem, error)
-	GetGoalValues(profileID string) ([]models.GoalItem, error)
+	GetGoalValues(profileID string, goalID string) ([]models.GoalItem, error)
 }
 
 type Auditor struct {
@@ -24,38 +24,34 @@ type Auditor struct {
 }
 
 type AuditorResults struct {
-	GoalAudit *models.GoalsAuditResults
+	GoalAudit *models.GoalsData
 }
 
 func (a Auditor) Run(e Extractor) AuditorResults {
 	goalAuditor := GoalAuditor{AccountID: a.AccountID, PropertyID: a.PropertyID, ProfileID: a.ProfileID}
 	goalResults := goalAuditor.Run(e)
-	return AuditorResults{GoalAudit: &goalResults}
+	return AuditorResults{GoalAudit: goalResults}
 }
 
 type GoalAuditor struct {
-	AccountID   string
-	PropertyID  string
-	ProfileID   string
-	Name        string
-	Description string
+	AccountID  string
+	PropertyID string
+	ProfileID  string
 }
 
-func (g GoalAuditor) Run(e Extractor) models.GoalsAuditResults {
-	goalData := models.GoalsData{}
-	goalData.GoalList, _ = e.GetGoalValues(g.ProfileID)
+func (g GoalAuditor) Run(e Extractor) *models.GoalsData {
+	goalData := models.NewGoalsData()
 	goalData.Goals, _ = e.GetGoalSettings(g.AccountID, g.PropertyID, g.ProfileID)
-	return goalData.RunAudit()
-}
-
-func NewGoalAuditor() GoalAuditor {
-	return GoalAuditor{Name: "GoalAudit", Description: "Usage of the goals feature to track certain aspects of website metrics that coincide with a conversion on the website."}
+	for _, goalSetting := range goalData.Goals {
+		values, _ := e.GetGoalValues(g.ProfileID, goalSetting.Id)
+		goalData.GoalList[goalSetting.Id] = values
+	}
+	goalData.RunAudit()
+	return &goalData
 }
 
 type CustomDimAuditor struct {
-	AccountID   string
-	PropertyID  string
-	ProfileID   string
-	Name        string
-	Description string
+	AccountID  string
+	PropertyID string
+	ProfileID  string
 }
