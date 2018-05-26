@@ -3,6 +3,8 @@ package models
 import analytics "google.golang.org/api/analytics/v3"
 
 type GoalsData struct {
+	Name         string
+	Description  string
 	Goals        []*analytics.Goal
 	GoalList     map[string][]GoalItem
 	HasMoreThan0 bool
@@ -13,6 +15,10 @@ type GoalItem struct {
 	Date       string
 	GoalID     string
 	GoalStarts int
+}
+
+func NewGoalsData() GoalsData {
+	return GoalsData{Name: "GoalAudit", Description: "Usage of the goals feature to track certain aspects of website metrics that coincide with a conversion on the website."}
 }
 
 func (g *GoalsData) checkHasMoreThan0() {
