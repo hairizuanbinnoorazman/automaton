@@ -10,6 +10,6 @@ func (m MockExtractor) GetCustomMetricValues(profileID string) ([]models.CustomM
 	return m.CustomMetricValues, m.Error
 }
 
-func (m MockExtractor) GetGoalValues(profileID string) ([]models.GoalItem, error) {
+func (m MockExtractor) GetGoalValues(profileID, goalID string) ([]models.GoalItem, error) {
 	return m.GoalValues, m.Error
 }

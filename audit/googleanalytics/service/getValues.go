@@ -10,6 +10,6 @@ func (s Extractor) GetCustomMetricValues(profileID string) ([]models.CustomMetri
 	return []models.CustomMetricsItem{}, nil
 }
 
-func (s Extractor) GetGoalValues(profileID string) ([]models.GoalItem, error) {
+func (s Extractor) GetGoalValues(profileID, goalID string) ([]models.GoalItem, error) {
 	return []models.GoalItem{}, nil
 }
