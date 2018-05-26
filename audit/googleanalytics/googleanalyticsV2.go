@@ -12,9 +12,9 @@ type Extractor interface {
 	GetProfileSettings(accountID, propertyID, profileID string) ([]*analytics.Profile, error)
 	GetProfileLinkSettings(accountID, propertyID, profileID string) ([]*analytics.ProfileFilterLink, error)
 
-	GetCustomDimValues(profileID string) ([]models.CustomDimensionItem, error)
-	GetCustomMetricValues(profileID string) ([]models.CustomMetricsItem, error)
-	GetGoalValues(profileID string, goalID string) ([]models.GoalItem, error)
+	GetCustomDimValues(profileID, startDate, endDate, customDimID string) ([]models.CustomDimensionItem, error)
+	GetCustomMetricValues(profileID, startDate, endDate, customMetricID string) ([]models.CustomMetricsItem, error)
+	GetGoalValues(profileID, startDate, endDate, goalID string) ([]models.GoalItem, error)
 }
 
 type Auditor struct {
