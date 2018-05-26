@@ -17,7 +17,8 @@ func (s Extractor) getManagementService() *analytics.ManagementService {
 	return managementService
 }
 
-func (s Extractor) getGADataService() *analyticsreporting.Service {
+func (s Extractor) getGADataService() *analyticsreporting.ReportsService {
 	analyticsDataService, _ := analyticsreporting.New(s.Client)
-	return analyticsDataService
+	analyticsReportingService := analyticsreporting.NewReportsService(analyticsDataService)
+	return analyticsReportingService
 }
