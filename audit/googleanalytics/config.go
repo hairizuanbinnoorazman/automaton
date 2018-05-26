@@ -2,6 +2,8 @@ package googleanalytics
 
 import (
 	"time"
+
+	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
 )
 
 // Config lists all the configurations that one would need when running in audit tests
@@ -30,7 +32,7 @@ func NewConfig() Config {
 
 	// Append the new audit items here - we will utilize the name generated from the default struct
 	var newAuditItems []auditItem
-	newAuditItems = append(newAuditItems, auditItem{Name: NewGoalAuditor().Name})
+	newAuditItems = append(newAuditItems, auditItem{Name: models.NewGoalsData().Name})
 
 	newConfig.AuditItems = newAuditItems
 	return newConfig
