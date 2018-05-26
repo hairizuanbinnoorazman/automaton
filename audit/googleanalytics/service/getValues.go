@@ -60,5 +60,52 @@ func (s Extractor) GetGoalValues(profileID, startDate, endDate, goalID string) (
 }
 
 func (s Extractor) GetEventValues(profileID, startDate, endDate string) ([]models.EventItem, error) {
-	return []models.EventItem{}, nil
+	request := analyticsreporting.GetReportsRequest{
+		ReportRequests: []*analyticsreporting.ReportRequest{
+			&analyticsreporting.ReportRequest{
+				DateRanges: []*analyticsreporting.DateRange{
+					&analyticsreporting.DateRange{
+						StartDate: startDate,
+						EndDate:   endDate,
+					},
+				},
+				ViewId: profileID,
+				Dimensions: []*analyticsreporting.Dimension{
+					&analyticsreporting.Dimension{
+						Name: "ga:eventCategory",
+					},
+					&analyticsreporting.Dimension{
+						Name: "ga:eventAction",
+					},
+					&analyticsreporting.Dimension{
+						Name: "ga:eventLabel",
+					},
+				},
+				Metrics: []*analyticsreporting.Metric{
+					&analyticsreporting.Metric{
+						Expression: "ga:eventValue",
+					},
+				},
+			},
+		},
+	}
+
+	gaDataService := s.getGADataService()
+	response, _ := gaDataService.BatchGet(&request).Do()
+
+	eventItems := []models.EventItem{}
+	rows := response.Reports[0].Data.Rows
+
+	for _, val := range rows {
+		eventValue := val.Metrics[0].Values[0]
+		eventValueInt, _ := strconv.Atoi(eventValue)
+		singleEventItem := models.EventItem{
+			EventCategory: val.Dimensions[0],
+			EventAction:   val.Dimensions[1],
+			EventLabel:    val.Dimensions[2],
+			EventValue:    eventValueInt}
+		eventItems = append(eventItems, singleEventItem)
+	}
+
+	return eventItems, nil
 }
