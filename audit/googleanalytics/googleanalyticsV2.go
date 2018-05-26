@@ -22,16 +22,22 @@ type Auditor struct {
 	AccountID  string
 	PropertyID string
 	ProfileID  string
+	StartDate  string
+	EndDate    string
 }
 
 type AuditorResults struct {
-	GoalAudit *models.GoalsData
+	// GoalAudit    *models.GoalsData
+	EventAuditor *models.EventsData
 }
 
 func (a Auditor) Run(e Extractor) AuditorResults {
-	goalAuditor := GoalAuditor{AccountID: a.AccountID, PropertyID: a.PropertyID, ProfileID: a.ProfileID}
-	goalResults := goalAuditor.Run(e)
-	return AuditorResults{GoalAudit: goalResults}
+	// goalAuditor := GoalAuditor{AccountID: a.AccountID, PropertyID: a.PropertyID, ProfileID: a.ProfileID}
+	// goalResults := goalAuditor.Run(e)
+
+	eventAuditor := EventAuditor{ProfileID: a.ProfileID, StartDate: a.StartDate, EndDate: a.EndDate}
+	eventResults := eventAuditor.Run(e)
+	return AuditorResults{EventAuditor: eventResults}
 }
 
 type GoalAuditor struct {
