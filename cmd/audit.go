@@ -75,7 +75,13 @@ var (
 					return
 				}
 				client := googleAnalyticsAuth(credFile)
-				auditor := googleanalytics.Auditor{}
+				auditor := googleanalytics.Auditor{
+					AccountID:  config.AccountID,
+					PropertyID: config.PropertyID,
+					ProfileID:  config.ProfileID,
+					StartDate:  config.StartDate,
+					EndDate:    config.EndDate,
+				}
 				service := service.Extractor{Client: client}
 				results := auditor.Run(service)
 				resultsJSON, err := json.MarshalIndent(results, "", "\t")
