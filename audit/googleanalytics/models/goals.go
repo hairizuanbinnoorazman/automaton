@@ -13,7 +13,6 @@ type GoalsData struct {
 
 type GoalItem struct {
 	Date       string
-	GoalID     string
 	GoalStarts int
 }
 
