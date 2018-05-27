@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -83,7 +84,7 @@ func (s Extractor) GetEventValues(profileID, startDate, endDate string) ([]model
 				},
 				Metrics: []*analyticsreporting.Metric{
 					&analyticsreporting.Metric{
-						Expression: "ga:eventValue",
+						Expression: "ga:sessions",
 					},
 				},
 			},
@@ -91,10 +92,20 @@ func (s Extractor) GetEventValues(profileID, startDate, endDate string) ([]model
 	}
 
 	gaDataService := s.getGADataService()
-	response, _ := gaDataService.BatchGet(&request).Do()
+	response, err := gaDataService.BatchGet(&request).Do()
+	if err != nil {
+		fmt.Println("ERRROR")
+		fmt.Println(err.Error())
+	}
 
 	eventItems := []models.EventItem{}
 	rows := response.Reports[0].Data.Rows
+
+	lol, _ := json.Marshal(response)
+	lol2, _ := json.Marshal(request)
+	fmt.Println(string(lol2))
+	fmt.Println(string(lol))
+	fmt.Println(len(rows))
 
 	for _, val := range rows {
 		eventValue := val.Metrics[0].Values[0]

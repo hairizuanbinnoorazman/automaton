@@ -1,6 +1,8 @@
 package googleanalytics
 
 import (
+	"fmt"
+
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
 	analytics "google.golang.org/api/analytics/v3"
 )
@@ -73,7 +75,13 @@ type EventAuditor struct {
 
 func (a EventAuditor) Run(e Extractor) *models.EventsData {
 	eventsData := models.NewEventsData()
-	eventsData.Events, _ = e.GetEventValues(a.ProfileID, a.StartDate, a.EndDate)
+	temp, err := e.GetEventValues(a.ProfileID, a.StartDate, a.EndDate)
+	if err != nil {
+		fmt.Println("Error!!!")
+		fmt.Println(err.Error())
+		return &eventsData
+	}
+	eventsData.Events = temp
 	eventsData.RunAudit()
 	return &eventsData
 }
