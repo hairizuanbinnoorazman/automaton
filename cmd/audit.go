@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics"
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/service"
+	"gitlab.com/hairizuanbinnoorazman/automaton/cmd/audit"
 )
 
 var (
@@ -26,7 +27,7 @@ var (
 		Long:  "Not available yet",
 		Run: func(cmd *cobra.Command, args []string) {
 			if tool == "ga" {
-				initialConfig := googleanalytics.NewConfig()
+				initialConfig := audit.NewConfig()
 				initialConfigJSON, err := json.MarshalIndent(initialConfig, "", "\t")
 				if err != nil {
 					fmt.Println("Unable to generate configuration")
@@ -68,7 +69,7 @@ var (
 			_ = bufio.NewWriter(file)
 
 			if tool == "ga" {
-				config := googleanalytics.Config{}
+				config := audit.Config{}
 				err = json.Unmarshal(configFile, &config)
 				if err != nil {
 					fmt.Println(fmt.Sprintf("Error in getting the json config. %v", err.Error()))

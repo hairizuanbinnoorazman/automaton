@@ -1,4 +1,4 @@
-package googleanalytics
+package audit
 
 import (
 	"time"
@@ -17,7 +17,8 @@ type Config struct {
 }
 
 type auditItem struct {
-	Name string `json:"name"`
+	Name         string `json:"name"`
+	TemplateFile string `json:"template_file"`
 }
 
 // NewConfig returns a new configuration file that has default values which one can use to modify and append
@@ -32,7 +33,16 @@ func NewConfig() Config {
 
 	// Append the new audit items here - we will utilize the name generated from the default struct
 	var newAuditItems []auditItem
-	newAuditItems = append(newAuditItems, auditItem{Name: models.NewGoalsData().Name})
+	newAuditItems = append(newAuditItems, auditItem{
+		Name:         models.NewProfileData().Name,
+		TemplateFile: "./templates/googleAnalyticsAudit/unfiltered_profile_available.md",
+	})
+	newAuditItems = append(newAuditItems, auditItem{
+		Name:         models.NewGoalsData().Name,
+		TemplateFile: "./templates/googleAnalyticsAudit/goal_usage.md",
+	})
+	newAuditItems = append(newAuditItems, auditItem{Name: models.NewEventsData().Name})
+	newAuditItems = append(newAuditItems, auditItem{Name: models.NewTrafficSourceData().Name})
 
 	newConfig.AuditItems = newAuditItems
 	return newConfig
