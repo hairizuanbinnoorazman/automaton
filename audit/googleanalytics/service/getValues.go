@@ -1,7 +1,6 @@
 package service
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -96,25 +95,20 @@ func (s Extractor) GetEventValues(profileID, startDate, endDate string) ([]model
 	if err != nil {
 		fmt.Println("ERRROR")
 		fmt.Println(err.Error())
+		return []models.EventItem{}, err
 	}
 
 	eventItems := []models.EventItem{}
 	rows := response.Reports[0].Data.Rows
 
-	lol, _ := json.Marshal(response)
-	lol2, _ := json.Marshal(request)
-	fmt.Println(string(lol2))
-	fmt.Println(string(lol))
-	fmt.Println(len(rows))
-
 	for _, val := range rows {
-		eventValue := val.Metrics[0].Values[0]
-		eventValueInt, _ := strconv.Atoi(eventValue)
+		sessionValue := val.Metrics[0].Values[0]
+		sessionValueInt, _ := strconv.Atoi(sessionValue)
 		singleEventItem := models.EventItem{
 			EventCategory: val.Dimensions[0],
 			EventAction:   val.Dimensions[1],
 			EventLabel:    val.Dimensions[2],
-			EventValue:    eventValueInt}
+			Sessions:      sessionValueInt}
 		eventItems = append(eventItems, singleEventItem)
 	}
 

@@ -13,7 +13,7 @@ type EventItem struct {
 	EventCategory string
 	EventAction   string
 	EventLabel    string
-	EventValue    int
+	Sessions      int
 }
 
 func NewEventsData() EventsData {
