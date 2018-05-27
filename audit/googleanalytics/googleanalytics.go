@@ -30,63 +30,6 @@ package googleanalytics
 // 	dataClient *http.Client
 // }
 
-// func (a *auditDetails) validate() error {
-// 	var errList []string
-// 	if a.AccountID == "" {
-// 		errList = append(errList, "Account ID")
-// 	}
-// 	if a.PropertyID == "" {
-// 		errList = append(errList, "Property ID")
-// 	}
-// 	if a.ProfileID == "" {
-// 		errList = append(errList, "View ID")
-// 	}
-// 	if a.StartDate == "" {
-// 		errList = append(errList, "Start Date")
-// 	}
-// 	if a.EndDate == "" {
-// 		errList = append(errList, "End Date")
-// 	}
-// 	if a.mgmtClient == nil {
-// 		errList = append(errList, "GA Management Client")
-// 	}
-// 	if a.mgmtClient == nil {
-// 		errList = append(errList, "GA Data Client")
-// 	}
-// 	if len(errList) > 0 {
-// 		errText := "Missing Fields: "
-// 		numMissingFields := len(errList)
-// 		for idx, missingField := range errList {
-// 			if idx < (numMissingFields - 1) {
-// 				errText = errText + missingField + ", "
-// 			} else {
-// 				errText = errText + missingField
-// 			}
-// 		}
-// 		return errors.New(errText)
-// 	}
-// 	return nil
-// }
-
-// type dataExtractors struct {
-// 	GaMgmtProperties []string
-// 	GaDataProperties map[string][]*analyticsreporting.ReportRequest
-// }
-
-// type GaMgmtProperties struct {
-// 	Profiles           []*analytics.Profile
-// 	Filters            []*analytics.Filter
-// 	ProfileFilterLinks []*analytics.ProfileFilterLink
-// 	Goals              []*analytics.Goal
-// 	CustomDimensions   []*analytics.CustomDimension
-// 	CustomMetrics      []*analytics.CustomMetric
-// }
-
-// func extractGAMgmtData(client *http.Client, mgmtProperties []string, accountID, propertyID, profileID string) (GaMgmtProperties, error) {
-// 	var newGaMgmtProperties GaMgmtProperties
-// 	return newGaMgmtProperties, nil
-// }
-
 // // RenderOutput function will be moved from this package to the cmd package.
 // // Current render output here will be depreciated; rendering should not be done on the domain level
 // func RenderOutput(w io.Writer, templateFile string, a interface{}) error {
