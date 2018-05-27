@@ -17,7 +17,9 @@ type GoalItem struct {
 }
 
 func NewGoalsData() GoalsData {
-	return GoalsData{Name: "GoalAudit", Description: "Usage of the goals feature to track certain aspects of website metrics that coincide with a conversion on the website."}
+	return GoalsData{
+		Name:        "Goal Usage",
+		Description: "Usage of the goals feature to track certain aspects of website metrics that coincide with a conversion on the website."}
 }
 
 func (g *GoalsData) checkHasMoreThan0() {
