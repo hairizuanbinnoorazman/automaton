@@ -2,9 +2,13 @@ package models
 
 import analytics "google.golang.org/api/analytics/v3"
 
-type customMetricsAuditor struct {
+type CustomMetricsData struct {
+	Name              string
+	Description       string
 	CustomMetrics     []*analytics.CustomMetrics
 	CustomMetricsList []CustomMetricsItem
+	HasMoreThan0      map[string][]bool
+	UsedCustomMetrics bool
 }
 
 type CustomMetricsItem struct {
@@ -14,16 +18,28 @@ type CustomMetricsItem struct {
 	Sessions          int
 }
 
-func (c customMetricsAuditor) HasMoreThan0() bool {
-	if len(c.CustomMetrics) > 0 {
-		return true
+func NewCustomMetricData() CustomMetricsData {
+	return CustomMetricsData{
+		Name:        "",
+		Description: "",
 	}
-	return false
 }
 
-func (c customMetricsAuditor) UsedCustomMetrics() bool {
-	if len(c.CustomMetricsList) > 0 {
-		return true
+func (c *CustomMetricsData) checkHasMoreThan0() {
+	if len(c.CustomMetrics) > 0 {
+		return
 	}
-	return false
+	return
+}
+
+func (c *CustomMetricsData) checkUsedCustomMetrics() {
+	if len(c.CustomMetricsList) > 0 {
+		return
+	}
+	return
+}
+
+func (c *CustomMetricsData) RunAudit() {
+	c.checkHasMoreThan0()
+	c.checkUsedCustomMetrics()
 }
