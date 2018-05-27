@@ -30,18 +30,19 @@ type Auditor struct {
 }
 
 type AuditorResults struct {
-	ProfileAuditor *models.ProfileData
-	// GoalAudit    *models.GoalsData
-	EventAuditor         *models.EventsData
-	TrafficSourceAuditor *models.TrafficSourceData
+	ProfileAudit       *models.ProfileData
+	GoalAudit          *models.GoalsData
+	EventAudit         *models.EventsData
+	TrafficSourceAudit *models.TrafficSourceData
+	CustomDimAudit     *models.CustomDimensionData
 }
 
 func (a Auditor) Run(e Extractor) AuditorResults {
 	profileAuditor := ProfileAuditor{AccountID: a.AccountID, PropertyID: a.PropertyID, ProfileID: a.ProfileID}
 	profileResults := profileAuditor.Run(e)
 
-	// goalAuditor := GoalAuditor{AccountID: a.AccountID, PropertyID: a.PropertyID, ProfileID: a.ProfileID}
-	// goalResults := goalAuditor.Run(e)
+	goalAuditor := GoalAuditor{AccountID: a.AccountID, PropertyID: a.PropertyID, ProfileID: a.ProfileID}
+	goalResults := goalAuditor.Run(e)
 
 	eventAuditor := EventAuditor{ProfileID: a.ProfileID, StartDate: a.StartDate, EndDate: a.EndDate}
 	eventResults := eventAuditor.Run(e)
@@ -49,9 +50,10 @@ func (a Auditor) Run(e Extractor) AuditorResults {
 	trafficSourceAuditor := TrafficAuditor{ProfileID: a.ProfileID, StartDate: a.StartDate, EndDate: a.EndDate}
 	trafficResults := trafficSourceAuditor.Run(e)
 	return AuditorResults{
-		ProfileAuditor:       profileResults,
-		EventAuditor:         eventResults,
-		TrafficSourceAuditor: trafficResults}
+		ProfileAudit:       profileResults,
+		GoalAudit:          goalResults,
+		EventAudit:         eventResults,
+		TrafficSourceAudit: trafficResults}
 }
 
 type ProfileAuditor struct {
