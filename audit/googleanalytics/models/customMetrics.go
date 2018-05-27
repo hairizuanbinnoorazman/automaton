@@ -6,22 +6,21 @@ type CustomMetricsData struct {
 	Name              string
 	Description       string
 	CustomMetrics     []*analytics.CustomMetrics
-	CustomMetricsList []CustomMetricsItem
+	CustomMetricsList map[string][]CustomMetricsItem
 	HasMoreThan0      map[string][]bool
 	UsedCustomMetrics bool
 }
 
 type CustomMetricsItem struct {
 	Date              string
-	CustomMetricID    string
-	CustomMetricValue string
+	CustomMetricValue int
 	Sessions          int
 }
 
 func NewCustomMetricData() CustomMetricsData {
 	return CustomMetricsData{
-		Name:        "",
-		Description: "",
+		Name:        "Custom Metrics Usage",
+		Description: "Usage of the custom metrics feature to track metrics that may not be part of web analytics.",
 	}
 }
 

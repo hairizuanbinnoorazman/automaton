@@ -62,7 +62,59 @@ func (s Extractor) GetCustomDimValues(profileID, startDate, endDate, customDimID
 }
 
 func (s Extractor) GetCustomMetricValues(profileID, startDate, endDate, customMetricID string) ([]models.CustomMetricsItem, error) {
-	return []models.CustomMetricsItem{}, nil
+	customMetricString := fmt.Sprintf("ga:metric%s", customMetricID)
+
+	request := analyticsreporting.GetReportsRequest{
+		ReportRequests: []*analyticsreporting.ReportRequest{
+			&analyticsreporting.ReportRequest{
+				DateRanges: []*analyticsreporting.DateRange{
+					&analyticsreporting.DateRange{
+						StartDate: startDate,
+						EndDate:   endDate,
+					},
+				},
+				ViewId: profileID,
+				Dimensions: []*analyticsreporting.Dimension{
+					&analyticsreporting.Dimension{
+						Name: "ga:date",
+					},
+				},
+				Metrics: []*analyticsreporting.Metric{
+					&analyticsreporting.Metric{
+						Expression: "ga:sessions",
+					},
+					&analyticsreporting.Metric{
+						Expression: customMetricString,
+					},
+				},
+			},
+		},
+	}
+
+	gaDataService := s.getGADataService()
+	response, err := gaDataService.BatchGet(&request).Do()
+	if err != nil {
+		fmt.Println(err.Error())
+		return []models.CustomMetricsItem{}, err
+	}
+
+	customMetricsItems := []models.CustomMetricsItem{}
+	rows := response.Reports[0].Data.Rows
+
+	for _, val := range rows {
+		sessionValue := val.Metrics[0].Values[0]
+		customMetricValue := val.Metrics[0].Values[1]
+		sessionValueInt, _ := strconv.Atoi(sessionValue)
+		customMetricValueInt, _ := strconv.Atoi(customMetricValue)
+		singleCustomMetricItem := models.CustomMetricsItem{
+			Date:              val.Dimensions[0],
+			Sessions:          sessionValueInt,
+			CustomMetricValue: customMetricValueInt,
+		}
+		customMetricsItems = append(customMetricsItems, singleCustomMetricItem)
+	}
+
+	return customMetricsItems, nil
 }
 
 func (s Extractor) GetTrafficSourceValues(profileID, startDate, endDate string) ([]models.TrafficSourceItem, error) {
