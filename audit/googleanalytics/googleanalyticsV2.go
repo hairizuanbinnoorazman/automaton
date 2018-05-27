@@ -18,6 +18,7 @@ type Extractor interface {
 	GetCustomMetricValues(profileID, startDate, endDate, customMetricID string) ([]models.CustomMetricsItem, error)
 	GetGoalValues(profileID, startDate, endDate, goalID string) ([]models.GoalItem, error)
 	GetEventValues(profileID, startDate, endDate string) ([]models.EventItem, error)
+	GetTrafficSourceValues(profileID, startDate, endDate string) ([]models.TrafficSourceItem, error)
 }
 
 type Auditor struct {
@@ -77,11 +78,28 @@ func (a EventAuditor) Run(e Extractor) *models.EventsData {
 	eventsData := models.NewEventsData()
 	temp, err := e.GetEventValues(a.ProfileID, a.StartDate, a.EndDate)
 	if err != nil {
-		fmt.Println("Error!!!")
 		fmt.Println(err.Error())
 		return &eventsData
 	}
 	eventsData.Events = temp
 	eventsData.RunAudit()
 	return &eventsData
+}
+
+type TrafficAuditor struct {
+	ProfileID string
+	StartDate string
+	EndDate   string
+}
+
+func (t TrafficAuditor) Run(e Extractor) *models.TrafficSourceData {
+	trafficSourceData := models.NewTrafficSourceData()
+	temp, err := e.GetTrafficSourceValues(t.ProfileID, t.StartDate, t.EndDate)
+	if err != nil {
+		fmt.Println(err.Error())
+		return &trafficSourceData
+	}
+	trafficSourceData.TrafficSources = temp
+	trafficSourceData.RunAudit()
+	return &trafficSourceData
 }
