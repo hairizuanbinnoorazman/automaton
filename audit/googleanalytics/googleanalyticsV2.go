@@ -37,23 +37,51 @@ type AuditorResults struct {
 	CustomDimAudit     *models.CustomDimensionData
 }
 
-func (a Auditor) Run(e Extractor) AuditorResults {
-	profileAuditor := ProfileAuditor{AccountID: a.AccountID, PropertyID: a.PropertyID, ProfileID: a.ProfileID}
-	profileResults := profileAuditor.Run(e)
+func contains(arr []string, val string) bool {
+	for _, v := range arr {
+		if v == val {
+			return true
+		}
+	}
+	return false
+}
 
-	goalAuditor := GoalAuditor{AccountID: a.AccountID, PropertyID: a.PropertyID, ProfileID: a.ProfileID}
-	goalResults := goalAuditor.Run(e)
+func (a Auditor) Run(e Extractor, auditList ...string) AuditorResults {
+	if len(auditList) == 0 {
+		auditList = []string{"profile", "goal", "event", "trafficSource"}
+	}
 
-	eventAuditor := EventAuditor{ProfileID: a.ProfileID, StartDate: a.StartDate, EndDate: a.EndDate}
-	eventResults := eventAuditor.Run(e)
+	var profileResults *models.ProfileData
+	var goalResults *models.GoalsData
+	var eventResults *models.EventsData
+	var trafficResults *models.TrafficSourceData
 
-	trafficSourceAuditor := TrafficAuditor{ProfileID: a.ProfileID, StartDate: a.StartDate, EndDate: a.EndDate}
-	trafficResults := trafficSourceAuditor.Run(e)
+	if contains(auditList, "profile") {
+		profileAuditor := ProfileAuditor{AccountID: a.AccountID, PropertyID: a.PropertyID, ProfileID: a.ProfileID}
+		profileResults = profileAuditor.Run(e)
+	}
+
+	if contains(auditList, "goal") {
+		goalAuditor := GoalAuditor{AccountID: a.AccountID, PropertyID: a.PropertyID, ProfileID: a.ProfileID}
+		goalResults = goalAuditor.Run(e)
+	}
+
+	if contains(auditList, "event") {
+		eventAuditor := EventAuditor{ProfileID: a.ProfileID, StartDate: a.StartDate, EndDate: a.EndDate}
+		eventResults = eventAuditor.Run(e)
+	}
+
+	if contains(auditList, "trafficSource") {
+		trafficSourceAuditor := TrafficAuditor{ProfileID: a.ProfileID, StartDate: a.StartDate, EndDate: a.EndDate}
+		trafficResults = trafficSourceAuditor.Run(e)
+	}
+
 	return AuditorResults{
 		ProfileAudit:       profileResults,
 		GoalAudit:          goalResults,
 		EventAudit:         eventResults,
-		TrafficSourceAudit: trafficResults}
+		TrafficSourceAudit: trafficResults,
+	}
 }
 
 type ProfileAuditor struct {
