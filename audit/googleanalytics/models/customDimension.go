@@ -19,8 +19,8 @@ type CustomDimensionItem struct {
 
 func NewCustomDimensionData() CustomDimensionData {
 	return CustomDimensionData{
-		Name:        "Custom Dimensions and Metrics Usage",
-		Description: "Usage of the custom dimension and metrics feature to track metrics that may not be part of web analytics."}
+		Name:        "Custom Dimensions Usage",
+		Description: "Usage of the custom dimension feature to track dimensions that could potentially be good to be used as a context with web analytics."}
 }
 
 func (c *CustomDimensionData) checkHasMoreThan0() {
