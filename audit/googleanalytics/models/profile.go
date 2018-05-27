@@ -20,3 +20,7 @@ func (p *ProfileData) checkHasMoreThan1() {
 	}
 	p.HasMoreThan1 = false
 }
+
+func (p *ProfileData) RunAudit() {
+	p.checkHasMoreThan1()
+}
