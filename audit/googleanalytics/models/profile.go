@@ -11,7 +11,10 @@ type ProfileData struct {
 }
 
 func NewProfileData() ProfileData {
-	return ProfileData{Name: "test", Description: "test"}
+	return ProfileData{
+		Name:        "Unfiltered Profile Available",
+		Description: "Check to see if there is a Google Analytics Profile that has no filters.",
+	}
 }
 
 func (p *ProfileData) checkHasMoreThan1() {
