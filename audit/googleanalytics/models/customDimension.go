@@ -2,28 +2,40 @@ package models
 
 import analytics "google.golang.org/api/analytics/v3"
 
-type customDimensionAuditor struct {
+type CustomDimensionData struct {
+	Name                string
+	Description         string
 	CustomDimensions    []*analytics.CustomDimension
-	CustomDimensionList []CustomDimensionItem
+	CustomDimensionList map[string][]CustomDimensionItem
+	HasMoreThan0        map[string][]bool
+	UsedCustomDim       bool
 }
 
 type CustomDimensionItem struct {
 	Date           string
-	DimensionID    string
 	DimensionValue string
 	Sessions       int
 }
 
-func (c customDimensionAuditor) HasMoreThan0() bool {
-	if len(c.CustomDimensions) > 0 {
-		return true
-	}
-	return false
+func NewCustomDimensionData() CustomDimensionData {
+	return CustomDimensionData{Name: "test", Description: "test"}
 }
 
-func (c customDimensionAuditor) UsedCustomDim() bool {
-	if len(c.CustomDimensionList) > 0 {
-		return true
+func (c *CustomDimensionData) checkHasMoreThan0() {
+	if len(c.CustomDimensions) > 0 {
+		return
 	}
-	return false
+	return
+}
+
+func (c *CustomDimensionData) checkUsedCustomDim() {
+	if len(c.CustomDimensionList) > 0 {
+		return
+	}
+	return
+}
+
+func (c *CustomDimensionData) RunAudit() {
+	c.checkHasMoreThan0()
+	c.checkUsedCustomDim()
 }

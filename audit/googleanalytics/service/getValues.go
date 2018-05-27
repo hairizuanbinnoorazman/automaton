@@ -9,7 +9,56 @@ import (
 )
 
 func (s Extractor) GetCustomDimValues(profileID, startDate, endDate, customDimID string) ([]models.CustomDimensionItem, error) {
-	return []models.CustomDimensionItem{}, nil
+	customDimensionString := fmt.Sprintf("ga:dimension%s", customDimID)
+
+	request := analyticsreporting.GetReportsRequest{
+		ReportRequests: []*analyticsreporting.ReportRequest{
+			&analyticsreporting.ReportRequest{
+				DateRanges: []*analyticsreporting.DateRange{
+					&analyticsreporting.DateRange{
+						StartDate: startDate,
+						EndDate:   endDate,
+					},
+				},
+				ViewId: profileID,
+				Dimensions: []*analyticsreporting.Dimension{
+					&analyticsreporting.Dimension{
+						Name: "ga:date",
+					},
+					&analyticsreporting.Dimension{
+						Name: customDimensionString,
+					},
+				},
+				Metrics: []*analyticsreporting.Metric{
+					&analyticsreporting.Metric{
+						Expression: "ga:sessions",
+					},
+				},
+			},
+		},
+	}
+
+	gaDataService := s.getGADataService()
+	response, err := gaDataService.BatchGet(&request).Do()
+	if err != nil {
+		fmt.Println(err.Error())
+		return []models.CustomDimensionItem{}, err
+	}
+
+	customDimensionItems := []models.CustomDimensionItem{}
+	rows := response.Reports[0].Data.Rows
+
+	for _, val := range rows {
+		sessionValue := val.Metrics[0].Values[0]
+		sessionValueInt, _ := strconv.Atoi(sessionValue)
+		singleCustomDimensionItem := models.CustomDimensionItem{
+			Date:           val.Dimensions[0],
+			DimensionValue: val.Dimensions[1],
+			Sessions:       sessionValueInt}
+		customDimensionItems = append(customDimensionItems, singleCustomDimensionItem)
+	}
+
+	return customDimensionItems, nil
 }
 
 func (s Extractor) GetCustomMetricValues(profileID, startDate, endDate, customMetricID string) ([]models.CustomMetricsItem, error) {
