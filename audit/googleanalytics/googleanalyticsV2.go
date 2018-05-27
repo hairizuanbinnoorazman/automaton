@@ -95,6 +95,17 @@ type CustomDimAuditor struct {
 	EndDate    string
 }
 
+func (c CustomDimAuditor) Run(e Extractor) *models.CustomDimensionData {
+	customDimensionsData := models.NewCustomDimensionData()
+	customDimensionsData.CustomDimensions, _ = e.GetCustomDimSettings(c.AccountID, c.PropertyID, c.ProfileID)
+	for _, customDimSetting := range customDimensionsData.CustomDimensions {
+		values, _ := e.GetCustomDimValues(c.ProfileID, c.StartDate, c.EndDate, customDimSetting.Id)
+		customDimensionsData.CustomDimensionList[customDimSetting.Id] = values
+	}
+	customDimensionsData.RunAudit()
+	return &customDimensionsData
+}
+
 type EventAuditor struct {
 	ProfileID string
 	StartDate string
