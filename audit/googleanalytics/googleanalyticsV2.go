@@ -31,7 +31,8 @@ type Auditor struct {
 
 type AuditorResults struct {
 	// GoalAudit    *models.GoalsData
-	EventAuditor *models.EventsData
+	EventAuditor         *models.EventsData
+	TrafficSourceAuditor *models.TrafficSourceData
 }
 
 func (a Auditor) Run(e Extractor) AuditorResults {
@@ -40,7 +41,10 @@ func (a Auditor) Run(e Extractor) AuditorResults {
 
 	eventAuditor := EventAuditor{ProfileID: a.ProfileID, StartDate: a.StartDate, EndDate: a.EndDate}
 	eventResults := eventAuditor.Run(e)
-	return AuditorResults{EventAuditor: eventResults}
+
+	trafficSourceAuditor := TrafficAuditor{ProfileID: a.ProfileID, StartDate: a.StartDate, EndDate: a.EndDate}
+	trafficResults := trafficSourceAuditor.Run(e)
+	return AuditorResults{EventAuditor: eventResults, TrafficSourceAuditor: trafficResults}
 }
 
 type GoalAuditor struct {
