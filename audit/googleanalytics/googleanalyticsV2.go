@@ -47,6 +47,12 @@ func (a Auditor) Run(e Extractor) AuditorResults {
 	return AuditorResults{EventAuditor: eventResults, TrafficSourceAuditor: trafficResults}
 }
 
+type ProfileAuditor struct {
+	AccountID  string
+	PropertyID string
+	ProfileID  string
+}
+
 type GoalAuditor struct {
 	AccountID  string
 	PropertyID string
@@ -70,6 +76,8 @@ type CustomDimAuditor struct {
 	AccountID  string
 	PropertyID string
 	ProfileID  string
+	StartDate  string
+	EndDate    string
 }
 
 type EventAuditor struct {
