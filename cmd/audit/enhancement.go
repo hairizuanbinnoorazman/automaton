@@ -2,6 +2,7 @@ package audit
 
 import (
 	"bytes"
+	"strconv"
 
 	"github.com/olekukonko/tablewriter"
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
@@ -15,7 +16,8 @@ type EnhancedTrafficSourceData struct {
 func enhanceTrafficSource(a *models.TrafficSourceData) *EnhancedTrafficSourceData {
 	var trafficSourceStr [][]string
 	for _, val := range a.TrafficSources {
-		trafficSourceStr = append(trafficSourceStr, []string{val.Medium, val.Source, val.Campaign, string(val.Sessions)})
+		sessionValue := strconv.Itoa(val.Sessions)
+		trafficSourceStr = append(trafficSourceStr, []string{val.Medium, val.Source, val.Campaign, sessionValue})
 	}
 
 	bufferedStr := bytes.NewBufferString("")
