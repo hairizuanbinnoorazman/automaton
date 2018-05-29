@@ -8,3 +8,5 @@ Goals may be of a more optional thing but it can help your analyst team to track
 {{else}}
 We observe that there are no goals in your profile. You should consider adding them to be able to monitor your key metrics on your digital platform more closely.
 {{end}}
+
+<div style="page-break-after: always;"></div>
