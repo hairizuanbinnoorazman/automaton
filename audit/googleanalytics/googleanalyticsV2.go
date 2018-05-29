@@ -49,13 +49,15 @@ func contains(arr []string, val string) bool {
 
 func (a Auditor) Run(e Extractor, auditList ...string) AuditorResults {
 	if len(auditList) == 0 {
-		auditList = []string{"profile", "goal", "event", "trafficSource"}
+		auditList = []string{"profile", "goal", "event", "trafficSource", "customDimension", "customMetrics"}
 	}
 
 	var profileResults *models.ProfileData
 	var goalResults *models.GoalsData
 	var eventResults *models.EventsData
 	var trafficResults *models.TrafficSourceData
+	var customDimResults *models.CustomDimensionData
+	var customMetricsResults *models.CustomMetricsData
 
 	if contains(auditList, "profile") {
 		profileAuditor := ProfileAuditor{AccountID: a.AccountID, PropertyID: a.PropertyID, ProfileID: a.ProfileID}
@@ -77,11 +79,23 @@ func (a Auditor) Run(e Extractor, auditList ...string) AuditorResults {
 		trafficResults = trafficSourceAuditor.Run(e)
 	}
 
+	if contains(auditList, "customDimension") {
+		customDimAuditor := CustomDimAuditor{AccountID: a.AccountID, PropertyID: a.PropertyID, ProfileID: a.ProfileID, StartDate: a.StartDate, EndDate: a.EndDate}
+		customDimResults = customDimAuditor.Run(e)
+	}
+
+	if contains(auditList, "customMetrics") {
+		customMetricsAuditor := CustomMetricsAuditor{AccountID: a.AccountID, PropertyID: a.PropertyID, ProfileID: a.ProfileID, StartDate: a.StartDate, EndDate: a.EndDate}
+		customMetricsResults = customMetricsAuditor.Run(e)
+	}
+
 	return AuditorResults{
 		ProfileAudit:       profileResults,
 		GoalAudit:          goalResults,
 		EventAudit:         eventResults,
 		TrafficSourceAudit: trafficResults,
+		CustomDimAudit:     customDimResults,
+		CustomMetricAudit:  customMetricsResults,
 	}
 }
 
@@ -135,6 +149,25 @@ func (c CustomDimAuditor) Run(e Extractor) *models.CustomDimensionData {
 	}
 	customDimensionsData.RunAudit()
 	return &customDimensionsData
+}
+
+type CustomMetricsAuditor struct {
+	AccountID  string
+	PropertyID string
+	ProfileID  string
+	StartDate  string
+	EndDate    string
+}
+
+func (c CustomMetricsAuditor) Run(e Extractor) *models.CustomMetricsData {
+	customMetricsData := models.NewCustomMetricData()
+	customMetricsData.CustomMetrics, _ = e.GetCustomMetricSettings(c.AccountID, c.PropertyID, c.ProfileID)
+	for _, customMetricSetting := range customMetricsData.CustomMetrics {
+		values, _ := e.GetCustomMetricValues(c.ProfileID, c.StartDate, c.EndDate, customMetricSetting.Id)
+		customMetricsData.CustomMetricsList[customMetricSetting.Id] = values
+	}
+	customMetricsData.RunAudit()
+	return &customMetricsData
 }
 
 type EventAuditor struct {
