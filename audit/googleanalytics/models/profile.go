@@ -18,10 +18,18 @@ func NewProfileData() ProfileData {
 	}
 }
 
-func (p *ProfileData) checkHasMoreThan1() {
+func (p *ProfileData) checkProfileCount() {
 	p.ProfileCount = len(p.Profiles)
 }
 
+func (p *ProfileData) checkUnfilteredProfileAvailable() {
+	if len(p.ProfileFilterLinks) == 0 {
+		p.UnfilteredProfileAvailable = true
+		return
+	}
+	p.UnfilteredProfileAvailable = false
+}
+
 func (p *ProfileData) RunAudit() {
-	p.checkHasMoreThan1()
+	p.checkProfileCount()
 }
