@@ -7,6 +7,8 @@ import (
 	"io"
 	"path"
 
+	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics"
+
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
 )
 
@@ -20,6 +22,8 @@ func RenderOutput(w io.Writer, templateFile string, a interface{}) error {
 
 	switch tempStruct := a.(type) {
 	case *models.ProfileData:
+		err = t.Execute(w, tempStruct)
+	case *models.GoalsData:
 		err = t.Execute(w, tempStruct)
 	case *models.CustomMetricsData:
 		err = t.Execute(w, tempStruct)
@@ -38,14 +42,20 @@ func RenderOutput(w io.Writer, templateFile string, a interface{}) error {
 	return nil
 }
 
-func RenderAllOutput(w io.Writer, config Config, auditOutput Audit) error {
-	for _, auditItem := range config.AuditItems {
-		if auditItem.Name == NewUnfilteredProfileAvailable().Metadata.Name {
-			// err := RenderOutput(w, auditItem.TemplateFile, auditOutput.UnfilteredProfileAvailable)
+func RenderAllOutput(w io.Writer, output googleanalytics.AuditorResults, auditConfigList ...AuditItem) error {
+	var err error
+	for _, auditItem := range auditConfigList {
+		if auditItem.Name == models.NewProfileData().Name {
+			err = RenderOutput(w, auditItem.TemplateFile, output.ProfileAudit)
 		}
-		if auditItem.Name == NewGoalUsage().Metadata.Name {
-			// err := RenderOutput(w, auditItem.TemplateFile, auditOutput.GoalUsage)
+		if auditItem.Name == models.NewGoalsData().Name {
+			err = RenderOutput(w, auditItem.TemplateFile, output.GoalAudit)
 		}
+	}
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
 	}
 
 	return nil
