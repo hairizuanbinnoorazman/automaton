@@ -1,9 +1,14 @@
 package models
 
+import (
+	"strings"
+)
+
 type EventsData struct {
 	Name                          string
 	Description                   string
 	Events                        []EventItem
+	UniqueEventCount              int
 	InconsistentCaseEventCategory bool
 	InconsistentCaseEventAction   bool
 	InconsistentCaseEventLabel    bool
@@ -17,27 +22,46 @@ type EventItem struct {
 }
 
 func NewEventsData() EventsData {
-	return EventsData{Name: "test", Description: "test"}
+	return EventsData{Name: "Events", Description: "Usage of event tracking allows one to track activities that may co-relate with a business"}
 }
 
-func (e *EventsData) checkHasMoreThan0() {
-	return
+func (e *EventsData) checkUniqueEventCount() {
+	e.UniqueEventCount = len(e.Events)
 }
 
+// Check that its using small case for easier consistency
 func (e *EventsData) checkInconsistentCaseEventCategory() {
-	return
+	for _, val := range e.Events {
+		if strings.ToLower(val.EventCategory) != val.EventCategory {
+			e.InconsistentCaseEventCategory = false
+			return
+		}
+	}
+	e.InconsistentCaseEventCategory = true
 }
 
 func (e *EventsData) checkInconsistentCaseEventAction() {
-	return
+	for _, val := range e.Events {
+		if strings.ToLower(val.EventAction) != val.EventAction {
+			e.InconsistentCaseEventAction = false
+			return
+		}
+	}
+	e.InconsistentCaseEventAction = true
 }
 
 func (e *EventsData) checkInconsistentCaseEventLabel() {
-	return
+	for _, val := range e.Events {
+		if strings.ToLower(val.EventLabel) != val.EventLabel {
+			e.InconsistentCaseEventLabel = false
+			return
+		}
+	}
+	e.InconsistentCaseEventLabel = true
 }
 
 func (e *EventsData) RunAudit() {
-	e.checkHasMoreThan0()
+	e.checkInconsistentCaseEventCategory()
 	e.checkInconsistentCaseEventAction()
 	e.checkInconsistentCaseEventCategory()
 	e.checkInconsistentCaseEventLabel()
