@@ -5,7 +5,7 @@ import analytics "google.golang.org/api/analytics/v3"
 type CustomMetricsData struct {
 	Name              string
 	Description       string
-	CustomMetrics     []*analytics.CustomMetrics
+	CustomMetrics     []*analytics.CustomMetric
 	CustomMetricsList map[string][]CustomMetricsItem
 	HasMoreThan0      map[string][]bool
 	UsedCustomMetrics bool
