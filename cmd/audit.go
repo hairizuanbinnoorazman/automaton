@@ -2,11 +2,14 @@ package cmd
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 
+	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics"
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/service"
@@ -66,10 +69,10 @@ var (
 				fmt.Println("Error in creation of new file to store output")
 				fmt.Println(err.Error())
 			}
-			_ = bufio.NewWriter(file)
+			bufferedFile := bufio.NewWriter(file)
 
 			if tool == "ga" {
-				config := audit.Config{}
+				var config audit.Config
 				err = json.Unmarshal(configFile, &config)
 				if err != nil {
 					fmt.Println(fmt.Sprintf("Error in getting the json config. %v", err.Error()))
@@ -83,8 +86,29 @@ var (
 					StartDate:  config.StartDate,
 					EndDate:    config.EndDate,
 				}
+
+				// Testing here
+				data := [][]string{
+					[]string{"A", "The Good", "500"},
+					[]string{"B", "The Very very Bad Man", "288"},
+					[]string{"C", "The Ugly", "120"},
+					[]string{"D", "The Gopher", "800"},
+				}
+
+				hehe := bytes.NewBufferString("")
+				table := tablewriter.NewWriter(hehe)
+				table.SetHeader([]string{"Date", "Description", "CV2"})
+				table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
+				table.SetCenterSeparator("|")
+				table.AppendBulk(data) // Add Bulk Data
+				table.Render()
+				fmt.Println(hehe)
+
+				io.WriteString(bufferedFile, hehe.String())
+
 				service := service.Extractor{Client: client}
 				results := auditor.Run(service)
+				audit.RenderAllOutput(bufferedFile, results, config.AuditItems...)
 				resultsJSON, err := json.MarshalIndent(results, "", "\t")
 				if err != nil {
 					fmt.Println(err.Error())
@@ -92,7 +116,7 @@ var (
 				}
 				fmt.Println(string(resultsJSON))
 
-				// bufferedFile.Flush()
+				bufferedFile.Flush()
 			} else if tool == "gtm" {
 				fmt.Println("Not yet implemented")
 			} else {
