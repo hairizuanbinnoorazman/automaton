@@ -3,12 +3,12 @@ package models
 import analytics "google.golang.org/api/analytics/v3"
 
 type GoalsData struct {
-	Name         string
-	Description  string
-	Goals        []*analytics.Goal
-	GoalList     map[string][]GoalItem
-	HasMoreThan0 bool
-	UsedGoals    map[string]bool
+	Name        string
+	Description string
+	Goals       []*analytics.Goal
+	GoalList    map[string][]GoalItem
+	GoalCount   int
+	UsedGoals   map[string]bool
 }
 
 type GoalItem struct {
@@ -22,12 +22,8 @@ func NewGoalsData() GoalsData {
 		Description: "Usage of the goals feature to track certain aspects of website metrics that coincide with a conversion on the website."}
 }
 
-func (g *GoalsData) checkHasMoreThan0() {
-	if len(g.Goals) > 0 {
-		g.HasMoreThan0 = true
-		return
-	}
-	g.HasMoreThan0 = false
+func (g *GoalsData) checkGoalCount() {
+	g.GoalCount = len(g.Goals)
 }
 
 func (g *GoalsData) checkUsedGoals() {
@@ -41,7 +37,7 @@ func (g *GoalsData) checkUsedGoals() {
 }
 
 func (g *GoalsData) RunAudit() {
-	g.checkHasMoreThan0()
+	g.checkGoalCount()
 	g.checkUsedGoals()
 	return
 }
