@@ -8,7 +8,7 @@ import (
 
 // Config lists all the configurations that one would need when running in audit tests
 type Config struct {
-	AuditItems []auditItem `json:"audit_items"`
+	AuditItems []AuditItem `json:"audit_items"`
 	AccountID  string      `json:"account_id"`
 	PropertyID string      `json:"property_id"`
 	ProfileID  string      `json:"profile_id"`
@@ -16,7 +16,7 @@ type Config struct {
 	EndDate    string      `json:"end_date"`
 }
 
-type auditItem struct {
+type AuditItem struct {
 	Name         string `json:"name"`
 	TemplateFile string `json:"template_file"`
 }
@@ -32,17 +32,17 @@ func NewConfig() Config {
 	}
 
 	// Append the new audit items here - we will utilize the name generated from the default struct
-	var newAuditItems []auditItem
-	newAuditItems = append(newAuditItems, auditItem{
+	var newAuditItems []AuditItem
+	newAuditItems = append(newAuditItems, AuditItem{
 		Name:         models.NewProfileData().Name,
 		TemplateFile: "./templates/googleAnalyticsAudit/unfiltered_profile_available.md",
 	})
-	newAuditItems = append(newAuditItems, auditItem{
+	newAuditItems = append(newAuditItems, AuditItem{
 		Name:         models.NewGoalsData().Name,
 		TemplateFile: "./templates/googleAnalyticsAudit/goal_usage.md",
 	})
-	newAuditItems = append(newAuditItems, auditItem{Name: models.NewEventsData().Name})
-	newAuditItems = append(newAuditItems, auditItem{Name: models.NewTrafficSourceData().Name})
+	newAuditItems = append(newAuditItems, AuditItem{Name: models.NewEventsData().Name})
+	newAuditItems = append(newAuditItems, AuditItem{Name: models.NewTrafficSourceData().Name})
 
 	newConfig.AuditItems = newAuditItems
 	return newConfig
