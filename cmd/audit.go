@@ -87,12 +87,6 @@ var (
 				service := service.Extractor{Client: client}
 				results := auditor.Run(service)
 				audit.RenderAllOutput(bufferedFile, results, config.AuditItems...)
-				resultsJSON, err := json.MarshalIndent(results, "", "\t")
-				if err != nil {
-					fmt.Println(err.Error())
-					return
-				}
-				fmt.Println(string(resultsJSON))
 
 				bufferedFile.Flush()
 			} else if tool == "gtm" {
