@@ -2,14 +2,11 @@ package cmd
 
 import (
 	"bufio"
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 
-	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics"
 	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/service"
@@ -86,25 +83,6 @@ var (
 					StartDate:  config.StartDate,
 					EndDate:    config.EndDate,
 				}
-
-				// Testing here
-				data := [][]string{
-					[]string{"A", "The Good", "500"},
-					[]string{"B", "The Very very Bad Man", "288"},
-					[]string{"C", "The Ugly", "120"},
-					[]string{"D", "The Gopher", "800"},
-				}
-
-				hehe := bytes.NewBufferString("")
-				table := tablewriter.NewWriter(hehe)
-				table.SetHeader([]string{"Date", "Description", "CV2"})
-				table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
-				table.SetCenterSeparator("|")
-				table.AppendBulk(data) // Add Bulk Data
-				table.Render()
-				fmt.Println(hehe)
-
-				io.WriteString(bufferedFile, hehe.String())
 
 				service := service.Extractor{Client: client}
 				results := auditor.Run(service)
