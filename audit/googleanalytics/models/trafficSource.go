@@ -17,7 +17,7 @@ type TrafficSourceItem struct {
 }
 
 func NewTrafficSourceData() TrafficSourceData {
-	return TrafficSourceData{Name: "Traffic Source Check", Description: "This is a test traffic source check"}
+	return TrafficSourceData{Name: "Traffic Sources", Description: "This is a check on traffic sources of the website to ensure that it make sense"}
 }
 
 func (t *TrafficSourceData) checkInconsistentCaseMedium() {
