@@ -6,3 +6,5 @@ Using custom dimension allow one to extrapolate web analytics beyond it usual di
 
 {{if gt .CustomDimensionCount 0}}We observe that you have {{.CustomDimensionCount}} Custom Dimensions in use
 {{else}}We observe that you have no custom dimensions in use.{{end}}
+
+<div style="page-break-after: always;"></div>
