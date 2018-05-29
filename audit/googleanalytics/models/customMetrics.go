@@ -9,6 +9,7 @@ type CustomMetricsData struct {
 	CustomMetricsList map[string][]CustomMetricsItem
 	HasMoreThan0      map[string][]bool
 	UsedCustomMetrics bool
+	CustomMetricCount int
 }
 
 type CustomMetricsItem struct {
@@ -33,9 +34,9 @@ func (c *CustomMetricsData) checkHasMoreThan0() {
 
 func (c *CustomMetricsData) checkUsedCustomMetrics() {
 	if len(c.CustomMetricsList) > 0 {
-		return
+		c.UsedCustomMetrics = true
 	}
-	return
+	c.UsedCustomMetrics = false
 }
 
 func (c *CustomMetricsData) RunAudit() {

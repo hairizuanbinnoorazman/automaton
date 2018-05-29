@@ -9,6 +9,7 @@ type CustomDimensionData struct {
 	CustomDimensionList map[string][]CustomDimensionItem
 	HasMoreThan0        map[string][]bool
 	UsedCustomDim       bool
+	CustomDimCount      int
 }
 
 type CustomDimensionItem struct {
@@ -32,7 +33,7 @@ func (c *CustomDimensionData) checkHasMoreThan0() {
 
 func (c *CustomDimensionData) checkUsedCustomDim() {
 	if len(c.CustomDimensionList) > 0 {
-		return
+		c.UsedCustomDim = true
 	}
 	return
 }
