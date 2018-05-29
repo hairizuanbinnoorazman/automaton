@@ -35,6 +35,7 @@ type AuditorResults struct {
 	EventAudit         *models.EventsData
 	TrafficSourceAudit *models.TrafficSourceData
 	CustomDimAudit     *models.CustomDimensionData
+	CustomMetricAudit  *models.CustomMetricsData
 }
 
 func contains(arr []string, val string) bool {

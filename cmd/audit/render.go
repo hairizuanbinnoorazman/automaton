@@ -28,6 +28,10 @@ func RenderOutput(w io.Writer, templateFile string, a interface{}) error {
 	case *models.TrafficSourceData:
 		enhancedTempStruct := enhanceTrafficSource(tempStruct)
 		err = t.Execute(w, enhancedTempStruct)
+	case *models.EventsData:
+		err = t.Execute(w, tempStruct)
+	case *models.CustomDimensionData:
+		err = t.Execute(w, tempStruct)
 	case *models.CustomMetricsData:
 		err = t.Execute(w, tempStruct)
 	default:
@@ -54,8 +58,17 @@ func RenderAllOutput(w io.Writer, output googleanalytics.AuditorResults, auditCo
 		if auditItem.Name == models.NewGoalsData().Name {
 			err = RenderOutput(w, auditItem.TemplateFile, output.GoalAudit)
 		}
+		if auditItem.Name == models.NewEventsData().Name {
+			err = RenderOutput(w, auditItem.TemplateFile, output.EventAudit)
+		}
 		if auditItem.Name == models.NewTrafficSourceData().Name {
 			err = RenderOutput(w, auditItem.TemplateFile, output.TrafficSourceAudit)
+		}
+		if auditItem.Name == models.NewCustomDimensionData().Name {
+			err = RenderOutput(w, auditItem.TemplateFile, output.CustomDimAudit)
+		}
+		if auditItem.Name == models.NewCustomMetricData().Name {
+			err = RenderOutput(w, auditItem.TemplateFile, output.CustomMetricAudit)
 		}
 	}
 
