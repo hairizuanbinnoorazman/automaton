@@ -54,6 +54,9 @@ func RenderAllOutput(w io.Writer, output googleanalytics.AuditorResults, auditCo
 		if auditItem.Name == models.NewGoalsData().Name {
 			err = RenderOutput(w, auditItem.TemplateFile, output.GoalAudit)
 		}
+		if auditItem.Name == models.NewTrafficSourceData().Name {
+			err = RenderOutput(w, auditItem.TemplateFile, output.TrafficSourceAudit)
+		}
 	}
 
 	if err != nil {
