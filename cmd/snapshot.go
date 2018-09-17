@@ -13,6 +13,12 @@ import (
 var (
 	snapshotCmd = &cobra.Command{
 		Use:   "snapshot",
+		Short: "The snapshot command allows one to grab their current configuration for their analytics tool",
+		Long:  `Not available yet`,
+	}
+
+	snapshotRunCmd = &cobra.Command{
+		Use:   "snapshot",
 		Short: "Use this command to create a snapshot of your GA account",
 		Long:  `Not available yet`,
 		Run: func(cmd *cobra.Command, args []string) {
@@ -43,6 +49,7 @@ var (
 )
 
 func getSnapshotCmd() {
-	snapshotCmd.Flags().StringVar(&cfgFile, "config", "config.json", "Default config file is config.yaml")
-	snapshotCmd.Flags().StringVar(&credFile, "cred", "cred.json", "Default config file is cred.yaml")
+	snapshotCmd.AddCommand(snapshotRunCmd)
+	snapshotRunCmd.Flags().StringVar(&cfgFile, "config", "config.json", "Default config file is config.yaml")
+	snapshotRunCmd.Flags().StringVar(&credFile, "cred", "cred.json", "Default config file is cred.yaml")
 }
