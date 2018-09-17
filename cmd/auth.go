@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"context"
@@ -14,5 +14,3 @@ func googleAnalyticsAuth(cred []byte) *http.Client {
 	client := authConfig.Client(emptyContext)
 	return client
 }
-
-
