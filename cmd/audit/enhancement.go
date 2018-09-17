@@ -31,3 +31,27 @@ func enhanceTrafficSource(a *models.TrafficSourceData) *EnhancedTrafficSourceDat
 	enhancedItem := EnhancedTrafficSourceData{*a, bufferedStr.String()}
 	return &enhancedItem
 }
+
+type EnhancedEventsData struct {
+	models.EventsData
+	EventsStr string
+}
+
+func enhanceEvents(a *models.EventsData) *EnhancedEventsData {
+	var eventsStr [][]string
+	for _, val := range a.Events {
+		sessionValue := strconv.Itoa(val.Sessions)
+		eventsStr = append(eventsStr, []string{val.EventCategory, val.EventAction, val.EventLabel, sessionValue})
+	}
+
+	bufferedStr := bytes.NewBufferString("")
+	table := tablewriter.NewWriter(bufferedStr)
+	table.SetHeader([]string{"Event Category", "Event Action", "Event Label", "Sessions"})
+	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
+	table.SetCenterSeparator("|")
+	table.AppendBulk(eventsStr)
+	table.Render()
+
+	enhancedItem := EnhancedEventsData{*a, bufferedStr.String()}
+	return &enhancedItem
+}

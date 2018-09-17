@@ -29,7 +29,8 @@ func RenderOutput(w io.Writer, templateFile string, a interface{}) error {
 		enhancedTempStruct := enhanceTrafficSource(tempStruct)
 		err = t.Execute(w, enhancedTempStruct)
 	case *models.EventsData:
-		err = t.Execute(w, tempStruct)
+		enhancedTempStruct := enhanceEvents(tempStruct)
+		err = t.Execute(w, enhancedTempStruct)
 	case *models.CustomDimensionData:
 		err = t.Execute(w, tempStruct)
 	case *models.CustomMetricsData:
