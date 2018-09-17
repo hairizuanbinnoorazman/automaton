@@ -17,8 +17,17 @@ var (
 		Long:  `Not available yet`,
 	}
 
+	snapshotInitCmd = &cobra.Command{
+		Use:   "init",
+		Short: "The init command prints out the initial set of configuration in order to use with the cli tool",
+		Long:  `Not available yet`,
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println("Not yet implemented")
+		},
+	}
+
 	snapshotRunCmd = &cobra.Command{
-		Use:   "snapshot",
+		Use:   "run",
 		Short: "Use this command to create a snapshot of your GA account",
 		Long:  `Not available yet`,
 		Run: func(cmd *cobra.Command, args []string) {
@@ -50,6 +59,7 @@ var (
 
 func getSnapshotCmd() {
 	snapshotCmd.AddCommand(snapshotRunCmd)
+	snapshotCmd.AddCommand(snapshotInitCmd)
 	snapshotRunCmd.Flags().StringVar(&cfgFile, "config", "config.json", "Default config file is config.yaml")
 	snapshotRunCmd.Flags().StringVar(&credFile, "cred", "cred.json", "Default config file is cred.yaml")
 }
