@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
+	"github.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
 	analyticsreporting "google.golang.org/api/analyticsreporting/v4"
 )
 

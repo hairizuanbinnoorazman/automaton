@@ -1,6 +1,6 @@
 package mockservice
 
-import "gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
+import "github.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
 
 func (m MockExtractor) GetCustomDimValues(profileID string) ([]models.CustomDimensionItem, error) {
 	return m.CustomDimValues, m.Error

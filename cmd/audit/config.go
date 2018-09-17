@@ -3,7 +3,7 @@ package audit
 import (
 	"time"
 
-	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
+	"github.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
 )
 
 // Config lists all the configurations that one would need when running in audit tests

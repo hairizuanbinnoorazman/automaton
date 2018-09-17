@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"strconv"
 
+	"github.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
 	"github.com/olekukonko/tablewriter"
-	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
 )
 
 type EnhancedTrafficSourceData struct {

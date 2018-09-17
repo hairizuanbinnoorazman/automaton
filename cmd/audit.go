@@ -7,10 +7,10 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/hairizuanbinnoorazman/automaton/audit/googleanalytics"
+	"github.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/service"
+	"github.com/hairizuanbinnoorazman/automaton/cmd/audit"
 	"github.com/spf13/cobra"
-	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics"
-	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/service"
-	"gitlab.com/hairizuanbinnoorazman/automaton/cmd/audit"
 )
 
 var (

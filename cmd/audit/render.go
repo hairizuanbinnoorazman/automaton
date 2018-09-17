@@ -7,9 +7,9 @@ import (
 	"io"
 	"path"
 
-	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics"
+	"github.com/hairizuanbinnoorazman/automaton/audit/googleanalytics"
 
-	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
+	"github.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
 )
 
 // RenderOutput function will be moved from this package to the cmd package.

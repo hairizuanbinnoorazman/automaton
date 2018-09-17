@@ -6,8 +6,8 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/hairizuanbinnoorazman/automaton/snapshot"
 	"github.com/spf13/cobra"
-	"gitlab.com/hairizuanbinnoorazman/automaton/snapshot"
 )
 
 var (
@@ -29,9 +29,9 @@ var (
 				os.Exit(1)
 			}
 			type gaConfig struct {
-				GaAccountID  string
-				GaPropertyID string
-				GaViewID     string
+				GaAccountID  string `json:"account_id"`
+				GaPropertyID string `json:"property_id"`
+				GaViewID     string `json:"profile_id"`
 			}
 			var liveGAConfig gaConfig
 			json.Unmarshal(config, &liveGAConfig)

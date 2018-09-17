@@ -3,7 +3,7 @@ package helper_test
 import (
 	"testing"
 
-	"gitlab.com/hairizuanbinnoorazman/automaton/helper"
+	"github.com/hairizuanbinnoorazman/automaton/helper"
 )
 
 func TestGetClient(t *testing.T) {

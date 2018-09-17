@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/hairizuanbinnoorazman/automaton/guide"
 	"github.com/spf13/cobra"
-	"gitlab.com/hairizuanbinnoorazman/automaton/guide"
 )
 
 var (

@@ -3,7 +3,7 @@ package googleanalytics
 import (
 	"fmt"
 
-	"gitlab.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
+	"github.com/hairizuanbinnoorazman/automaton/audit/googleanalytics/models"
 	analytics "google.golang.org/api/analytics/v3"
 )
 
