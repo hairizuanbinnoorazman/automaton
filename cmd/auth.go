@@ -14,3 +14,10 @@ func googleAnalyticsAuth(cred []byte) *http.Client {
 	client := authConfig.Client(emptyContext)
 	return client
 }
+
+func googleTagManagerAuth(cred []byte) *http.Client {
+	authConfig, _ := google.JWTConfigFromJSON(cred, "https://www.googleapis.com/auth/tagmanager.edit.containers")
+	emptyContext := context.Background()
+	client := authConfig.Client(emptyContext)
+	return client
+}

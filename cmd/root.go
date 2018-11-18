@@ -34,16 +34,19 @@ var (
 func init() {
 	cobra.OnInitialize(initConfig)
 
+	rootCmd.AddCommand(applyCmd)
+	getApplyCmd()
+
 	rootCmd.AddCommand(auditCmd)
 	getAuditCmd()
-
-	rootCmd.AddCommand(versionCmd)
 
 	rootCmd.AddCommand(snapshotCmd)
 	getSnapshotCmd()
 
 	rootCmd.AddCommand(guideCmd)
 	getGuideCmd()
+
+	rootCmd.AddCommand(versionCmd)
 
 }
 
